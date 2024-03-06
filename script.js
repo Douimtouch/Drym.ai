@@ -10,15 +10,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeButton = document.querySelector('.close');
 
     selectedDateInput.value = currentDate.toISOString().split('T')[0];
+    disablePastDates();
+
     selectedDateInput.addEventListener('change', function() {
         currentDate = new Date(this.value);
         updateCalendar();
     });
 
     prevWeekButton.addEventListener('click', function() {
-        currentDate.setDate(currentDate.getDate() - 7);
-        selectedDateInput.value = currentDate.toISOString().split('T')[0];
-        updateCalendar();
+        const newDate = new Date(currentDate);
+        newDate.setDate(currentDate.getDate() - 7);
+        if (newDate >= new Date().setHours(0, 0, 0, 0)) {
+            currentDate = newDate;
+            selectedDateInput.value = currentDate.toISOString().split('T')[0];
+            updateCalendar();
+        }
     });
 
     nextWeekButton.addEventListener('click', function() {
@@ -47,6 +53,11 @@ document.addEventListener('DOMContentLoaded', function() {
         for (let i = 0; i < 7; i++) {
             const date = new Date(weekStart);
             date.setDate(weekStart.getDate() + i);
+
+            // Vérifier si la date est antérieure à la date actuelle
+            if (date < new Date().setHours(0, 0, 0, 0)) {
+                continue; // Passer à la prochaine itération de la boucle
+            }
 
             const day = document.createElement('div');
             day.classList.add('day');
@@ -104,6 +115,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function getDayName(dayIndex) {
         const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
         return dayNames[dayIndex];
+    }
+
+    function disablePastDates() {
+        const today = new Date().toISOString().split('T')[0];
+        selectedDateInput.setAttribute('min', today);
     }
 
     updateCalendar();
