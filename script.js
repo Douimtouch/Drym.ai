@@ -45,34 +45,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCalendar() {
         calendarContainer.innerHTML = '';
-
+    
         const currentDay = currentDate.getDay();
         const weekStart = new Date(currentDate);
         weekStart.setDate(currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1));
-
+    
         for (let i = 0; i < 7; i++) {
             const date = new Date(weekStart);
             date.setDate(weekStart.getDate() + i);
-
+    
             // Vérifier si la date est antérieure à la date actuelle
             if (date < new Date().setHours(0, 0, 0, 0)) {
                 continue; // Passer à la prochaine itération de la boucle
             }
-
+    
             const day = document.createElement('div');
             day.classList.add('day');
-
+    
             const dayName = document.createElement('div');
             dayName.classList.add('day-name');
             dayName.textContent = `${getDayName(date.getDay())} (${date.toLocaleDateString()})`;
             day.appendChild(dayName);
-
+    
             const timeSlotsContainer = document.createElement('div');
             timeSlotsContainer.classList.add('time-slots-container');
-
+    
             const timeSlots = document.createElement('div');
             timeSlots.classList.add('time-slots');
-
+    
             for (let j = 0; j < 24; j++) {
                 for (let k = 0; k < 4; k++) {
                     const timeSlot = document.createElement('div');
@@ -93,12 +93,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     timeSlots.appendChild(timeSlot);
                 }
             }
-
+    
             timeSlotsContainer.appendChild(timeSlots);
-
+    
             day.appendChild(timeSlotsContainer);
-
+    
             calendarContainer.appendChild(day);
+        }
+    
+        // Ajuster le défilement horizontal pour afficher le jour actuel
+        const currentDayElement = document.querySelector('.day:not(.past-day)');
+        if (currentDayElement) {
+            currentDayElement.scrollIntoView({ inline: 'start', behavior: 'smooth' });
         }
     }
 
