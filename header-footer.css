@@ -163,8 +163,8 @@ footer {
 }
 
 .footer-col {
-    flex-basis: 31%;
-    margin-right: 10px;
+    flex-basis: 30%;
+    margin-right: 8px;
     margin-bottom: 20px;
 }
 
