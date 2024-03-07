@@ -147,12 +147,11 @@ footer {
     background-color: #a1c0fa;
     border-width: 30px;
     font-family: 'Roboto', sans-serif;
-    min-height: 285px;
+    min-height: 485px;
     max-height: auto;
-    margin-left: -138px;
+    margin-left: -68px;
     margin-top: 0%;
-    bottom: -200px;
-    left: -18px;
+
     position: sticky;
     display: inline-block;
 }
