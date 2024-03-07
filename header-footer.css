@@ -1,18 +1,25 @@
 /* header-footer.css */
 /* Styles spécifiques au header */
 header {
+    list-style-type: none;
     background-color: #a1c0fa;
     padding: 20px;
     width: 100%;
     flex-shrink: 0;
-    margin-bottom: 2%;
-    height: 300px;
+    margin-bottom: 3%;
+    height: 100px;
+    justify-content: space-around;
 }
+
+nav {width: 800px;}
+
+
 
 nav ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    
 }
 
 nav ul li {
@@ -34,9 +41,11 @@ nav ul li:hover > a {
 .dropdown-menu {
     display: none;
     position: absolute;
+    top: 100%;
+    left: 0;
     background-color: #f9f9f9;
     min-width: 110px;
-    max-height: auto;
+    min-height: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
@@ -57,22 +66,33 @@ nav ul li:hover > a {
 }
 
 /* Styles spécifiques au footer */
+
 footer {
     background-color: #a1c0fa;
-    padding: 0 0.5%;
+    padding: 20px;
     margin-top: auto;
     width: 100%;
     flex-shrink: 0;
+    height: auto;
+}
+
+.footer_container {
+    max-width: 100%;
+    margin: 0 auto;
 }
 
 .row {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .col {
     flex: 1;
     padding: 0 20px;
+    margin-bottom: 40px;
+    text-align: center;
+    min-width: 200px;
 }
 
 .col h4 {
@@ -92,4 +112,10 @@ footer {
 
 .col ul li a:hover {
     color: #0056b3;
+}
+
+@media screen and (max-width: 768px) {
+    .col {
+        flex: 1 1 100%;
+    }
 }
