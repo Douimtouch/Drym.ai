@@ -149,11 +149,11 @@ footer {
     font-family: 'Roboto', sans-serif;
     min-height: 300px;
     max-height: auto;
-    margin-left: -3px;
+    margin-left: -13px;
     margin-top: 0%;
     bottom: 225px;
     position: sticky;
-    display : inline-block;
+    display: inline-block;
 }
 
 .footer-container{
