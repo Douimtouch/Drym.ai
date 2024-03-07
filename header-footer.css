@@ -41,13 +41,13 @@ header {
 }
 
 #menuToggle a:hover {
-    color: tomato;
+    color: blue;
 }
 
 #menuToggle input {
     display: block;
     width: 40px;
-    height: 32px;
+    height: 25 px;
     position: absolute;
     top: -7px;
     left: -5px;
@@ -124,7 +124,7 @@ header {
     list-style: none;
     opacity: 0.9;
     border-radius: 5px;
-    min-width: 80px;
+    min-width: 60px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
