@@ -144,8 +144,9 @@ header {
 footer {
     background-color: #a1c0fa;
     font-family: 'Roboto', sans-serif;
-    height: 485px;
-    padding: 3%;
+    min-height: 485px;
+    max-height: auto;
+    padding: 2%+25px;
     margin-top: 14%;
     margin-left: -20px;
     display : inline-block;
