@@ -164,6 +164,7 @@ footer {
 
 .footer-col {
     flex-basis: 20%;
+    margin-right: 10px;
     margin-bottom: 20px;
 }
 
