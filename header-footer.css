@@ -156,7 +156,7 @@ header {
 
 /* Styles pour le footer */
 footer {
-    background-image: linear-gradient(to top, #a1cbf0b4 0%, #add9ff 32%, #b8daf8 64%, #dceeff 97%, #edf6ff 100%);
+    background-image: linear-gradient(to top left, #a1cbf0b4 0%, #add9ff 32%, #b8daf8 64%, #dceeff 97%, #edf6ff 100%);
     border-width: 30px;
     font-family: 'Roboto', sans-serif;
     min-height: 485px;
