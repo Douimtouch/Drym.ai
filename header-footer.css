@@ -170,10 +170,14 @@ footer {
 
 .footer-col {
 
-    max-width: 8px+84%;
-    min-width: 42%;
+    
+    flex-basis: 42%;
     margin-left: 8px;
     margin-bottom: 20px;
+}
+
+.footer-col:nth-child(3) {
+  flex-basis: 8px+84%;
 }
 
 .footer-col h4 {
