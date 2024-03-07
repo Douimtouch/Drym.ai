@@ -51,19 +51,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCalendar() {
         calendarContainer.innerHTML = '';
-
+    
         const currentDay = currentDate.getDay();
         const weekStart = new Date(currentDate);
         weekStart.setDate(currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1));
-
+    
+        let daysDisplayed = 0;
+    
         for (let i = 0; i < 7; i++) {
             const date = new Date(weekStart);
             date.setDate(weekStart.getDate() + i);
-
+    
             // Vérifier si la date est antérieure à la date actuelle
             if (date < new Date().setHours(0, 0, 0, 0)) {
                 continue; // Passer à la prochaine itération de la boucle
             }
+    
+            daysDisplayed++;
 
             const day = document.createElement('div');
             day.classList.add('day');
@@ -108,6 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
+            calendarContainer.style.gridTemplateColumns = `repeat(${daysDisplayed}, 1fr)`;
             timeSlotsContainer.appendChild(timeSlots);
 
             day.appendChild(timeSlotsContainer);
