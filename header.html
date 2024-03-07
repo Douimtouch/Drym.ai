@@ -1,19 +1,26 @@
 <!-- header.html -->
 <link rel="stylesheet" type="text/css" href="header-footer.css">
-<script src="header-footer.js"></script>
 
-    <nav>
-        <ul>
-            <li><a href="#">Accueil</a></li>
-            <li class="dropdown">
-                <a href="#">Services</a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">Service 1</a></li>
-                    <li><a href="#">Service 2</a></li>
-                    <li><a href="#">Service 3</a></li>
-                </ul>
-            </li>
-            <li><a href="#">À propos</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
+<header>
+    <nav role="navigation">
+        <div id="menuToggle">
+            <input type="checkbox" />
+            <span></span>
+            <span></span>
+            <span></span>
+            <ul id="menu">
+                <li><a href="#">Accueil</a></li>
+                <li class="dropdown">
+                    <a href="#">Services</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Service 1</a></li>
+                        <li><a href="#">Service 2</a></li>
+                        <li><a href="#">Service 3</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">À propos</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
     </nav>
+</header>

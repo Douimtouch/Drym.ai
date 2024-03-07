@@ -5,19 +5,39 @@
     box-sizing: border-box;
 }
 
+
+
+iframe, header iframe { 
+    display: block;
+    height: 485px;
+    position: absolute;
+}
+
+iframe, footer iframe {
+    width: 100%;
+    display: flex;
+    height: 485px;
+    transition: height 0.3s ease;
+    position: relative;
+}
+
+.saut {
+    height: 340px;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #f5f5f5;
     color: #333;
     margin: 0;
-    padding: 0;
+    padding: 0px;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
 .container {
-    max-width: 1200px;
+    max-width: auto;
     margin: 0 auto;
     padding: 20px;
     flex-grow: 1;
