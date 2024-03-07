@@ -91,6 +91,12 @@ h1 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     max-height: 80vh;
     overflow-y: auto;
+    scrollbar-width: none; /* Masque la scrollbar pour Firefox */
+    -ms-overflow-style: none; /* Masque la scrollbar pour IE et Edge */
+}
+
+.day::-webkit-scrollbar {
+    display: none; /* Masque la scrollbar pour Chrome, Safari et Opera */
 }
 
 .day-name {
