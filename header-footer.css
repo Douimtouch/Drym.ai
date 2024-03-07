@@ -4,6 +4,9 @@ header {
     background-color: #a1c0fa;
     padding: 20px;
     width: 100%;
+    flex-shrink: 0;
+    margin-bottom: 2%;
+    height: 300px;
 }
 
 nav ul {
@@ -32,7 +35,8 @@ nav ul li:hover > a {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    min-width: 120px;
+    min-width: 110px;
+    max-height: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
@@ -55,9 +59,10 @@ nav ul li:hover > a {
 /* Styles spécifiques au footer */
 footer {
     background-color: #a1c0fa;
-    padding: 20px 50px;
+    padding: 0 0.5%;
     margin-top: auto;
     width: 100%;
+    flex-shrink: 0;
 }
 
 .row {
