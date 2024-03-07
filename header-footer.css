@@ -7,10 +7,12 @@
 /* header-footer.css */
 
 /* Styles pour le header */
-header, footer {
+header {
     width: 100%;
 }
-
+footer {
+    width: 105%;
+}
 
 
 header {
