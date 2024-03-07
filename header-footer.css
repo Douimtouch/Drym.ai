@@ -1,0 +1,90 @@
+/* header-footer.css */
+/* Styles spécifiques au header */
+header {
+    background-color: #a1c0fa;
+    padding: 20px;
+    width: 100%;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline-block;
+    position: relative;
+}
+
+nav ul li a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+}
+
+nav ul li:hover > a {
+    background-color: #0056b3;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu li a {
+    color: #333;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Styles spécifiques au footer */
+footer {
+    background-color: #a1c0fa;
+    padding: 20px 50px;
+    margin-top: auto;
+    width: 100%;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.col {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.col h4 {
+    color: #1e4fa8;
+    margin-bottom: 10px;
+}
+
+.col ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.col ul li a {
+    color: #333;
+    text-decoration: none;
+}
+
+.col ul li a:hover {
+    color: #0056b3;
+}
