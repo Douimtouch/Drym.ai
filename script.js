@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextWeekButton = document.getElementById('next-week');
     const formContainer = document.getElementById('form-container');
     const closeButton = document.querySelector('.close');
+    const dateInput = document.getElementById('date');
 
     selectedDateInput.value = currentDate.toISOString().split('T')[0];
     disablePastDates();
@@ -43,76 +44,70 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-function updateCalendar() {
-    calendarContainer.innerHTML = '';
+    function updateCalendar() {
+        calendarContainer.innerHTML = '';
 
-    const currentDay = currentDate.getDay();
-    const weekStart = new Date(currentDate);
-    weekStart.setDate(currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1));
+        const currentDay = currentDate.getDay();
+        const weekStart = new Date(currentDate);
+        weekStart.setDate(currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1));
 
-    for (let i = 0; i < 7; i++) {
-        const date = new Date(weekStart);
-        date.setDate(weekStart.getDate() + i);
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(weekStart);
+            date.setDate(weekStart.getDate() + i);
 
-        // Vérifier si la date est antérieure à la date actuelle
-        if (date < new Date().setHours(0, 0, 0, 0)) {
-            continue; // Passer à la prochaine itération de la boucle
-        }
-
-        const day = document.createElement('div');
-        day.classList.add('day');
-
-        const dayName = document.createElement('div');
-        dayName.classList.add('day-name');
-        dayName.textContent = `${getDayName(date.getDay())} (${date.toLocaleDateString()})`;
-        day.appendChild(dayName);
-
-        const timeSlotsContainer = document.createElement('div');
-        timeSlotsContainer.classList.add('time-slots-container');
-
-        const timeSlots = document.createElement('div');
-        timeSlots.classList.add('time-slots');
-
-        for (let j = 0; j < 24; j++) {
-            for (let k = 0; k < 4; k++) {
-                const timeSlot = document.createElement('div');
-                timeSlot.classList.add('time-slot');
-                let hour = j;
-                let minute = k * 15;
-                if (hour < 10) {
-                    hour = '0' + hour;
-                }
-                if (minute === 0) {
-                    minute = '00';
-                }
-                const time = `${hour}:${minute}`;
-                timeSlot.textContent = time;
-                timeSlot.dataset.date = date.toISOString().split('T')[0];
-                timeSlot.dataset.time = time;
-                timeSlot.addEventListener('click', openForm);
-                timeSlots.appendChild(timeSlot);
+            // Vérifier si la date est antérieure à la date actuelle
+            if (date < new Date().setHours(0, 0, 0, 0)) {
+                continue; // Passer à la prochaine itération de la boucle
             }
+
+            const day = document.createElement('div');
+            day.classList.add('day');
+
+            const dayName = document.createElement('div');
+            dayName.classList.add('day-name');
+            dayName.textContent = `${getDayName(date.getDay())} (${date.toLocaleDateString()})`;
+            day.appendChild(dayName);
+
+            const timeSlotsContainer = document.createElement('div');
+            timeSlotsContainer.classList.add('time-slots-container');
+
+            const timeSlots = document.createElement('div');
+            timeSlots.classList.add('time-slots');
+
+            for (let j = 0; j < 24; j++) {
+                for (let k = 0; k < 4; k++) {
+                    const timeSlot = document.createElement('div');
+                    timeSlot.classList.add('time-slot');
+                    let hour = j;
+                    let minute = k * 15;
+                    if (hour < 10) {
+                        hour = '0' + hour;
+                    }
+                    if (minute === 0) {
+                        minute = '00';
+                    }
+                    const time = `${hour}:${minute}`;
+                    timeSlot.textContent = time;
+                    timeSlot.dataset.date = date.toISOString().split('T')[0];
+                    timeSlot.dataset.time = time;
+                    timeSlot.addEventListener('click', openForm);
+                    timeSlots.appendChild(timeSlot);
+                }
+            }
+
+            timeSlotsContainer.appendChild(timeSlots);
+
+            day.appendChild(timeSlotsContainer);
+
+            calendarContainer.appendChild(day);
         }
-
-        timeSlotsContainer.appendChild(timeSlots);
-
-        day.appendChild(timeSlotsContainer);
-
-        calendarContainer.appendChild(day);
     }
-
-    // Ajuster le défilement horizontal pour afficher le jour actuel
-    const currentDayElement = document.querySelector('.day:not(.past-day)');
-    if (currentDayElement) {
-        currentDayElement.scrollIntoView({ inline: 'start', behavior: 'smooth' });
-    }
-}
 
     function openForm(event) {
         const selectedDate = event.target.dataset.date;
         const selectedTime = event.target.dataset.time;
 
-        document.getElementById('date').value = selectedDate;
+        dateInput.value = selectedDate;
         document.getElementById('time').value = selectedTime;
 
         formContainer.style.display = 'block';
@@ -126,6 +121,7 @@ function updateCalendar() {
     function disablePastDates() {
         const today = new Date().toISOString().split('T')[0];
         selectedDateInput.setAttribute('min', today);
+        dateInput.setAttribute('min', today);
     }
 
     updateCalendar();
