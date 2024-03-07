@@ -98,7 +98,7 @@ header {
 #menu {
     position: absolute;
     width: 180px;
-    margin: -100px 0 0 -50px;
+    margin: -100px 0 0 -10px;
     padding: 50px;
     padding-top: 125px;
 
@@ -124,8 +124,8 @@ header {
     list-style: none;
     opacity: 0.9;
     border-radius: 5px;
-    max-height: 40
-    min-width: 40px;
+    max-height: 30
+    min-width: 30px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
@@ -136,7 +136,7 @@ header {
 
 .dropdown-menu li a {
     color: #000;
-    padding: 4px 6px;
+    padding: 4px 4px;
     text-decoration: none;
     display: block;
 }
