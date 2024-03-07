@@ -152,6 +152,9 @@ footer {
     margin-left: -28px;
     bottom: 0;
     margin-top: 0%;
+    padding-left: 8px;
+
+
     display: inline-block;
 }
 
@@ -162,7 +165,7 @@ footer {
 .footer-row {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: Left;
 }
 
 .footer-col {
