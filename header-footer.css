@@ -124,7 +124,8 @@ header {
     list-style: none;
     opacity: 0.9;
     border-radius: 5px;
-    min-width: 60px;
+    max-height: 40
+    min-width: 40px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
