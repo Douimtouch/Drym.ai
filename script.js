@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const timeSlots = document.createElement('div');
             timeSlots.classList.add('time-slots');
 
-            for (let j = 0; j < 24; j++) {
+            for (let j = 7; j < 21; j++) {
                 for (let k = 0; k < 4; k++) {
                     const now = new Date();
                     const slotDateTime = new Date(date);
