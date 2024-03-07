@@ -155,7 +155,7 @@ footer {
     padding-left: 28px;
 
 
-    display: inline-block;
+    display: flexbox;
 }
 
 .footer-container{
@@ -168,9 +168,7 @@ footer {
     justify-content: flex-start;
 }
 
-.footer-col {
-
-    
+.footer-col { 
     flex: 1;
     margin-left: 8px;
     margin-bottom: 20px;
