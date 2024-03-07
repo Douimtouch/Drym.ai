@@ -11,7 +11,7 @@ header {
     width: 100%;
 }
 footer {
-    width: 105%;
+    width: 110%;
 }
 
 
@@ -165,7 +165,7 @@ footer {
 }
 
 .footer-col {
-    flex-basis: 29%;
+    flex-basis: 31%;
     margin-left: 8px;
     margin-bottom: 20px;
 }
