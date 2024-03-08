@@ -306,4 +306,5 @@ input, textarea {
 
 scrollbar-button {
     -moz-appearance: none;
+    appearance: none;
 }
