@@ -1,4 +1,4 @@
-// script.js
+// script-calendar.js
 document.addEventListener('DOMContentLoaded', function() {
     let currentDate = new Date();
 
