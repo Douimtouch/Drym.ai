@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>On vous rappelle ? </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="style.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body class="fade-in">
+
+    <header id="header">
+        <iframe src="header.html" frameborder="0" scrolling="no"></iframe>
+    </header>
+
+    <main>
+    <div class="saut"></div>
+    <div class="container">
+
+        <h1>Réservez une consultation gratuite en un clic !</h1>
+
+        <div class="calendar-controls">
+            <button id="prev-week" class="control-btn"><i class="fas fa-chevron-left"></i></button>
+            <input type="date" id="selected-date" class="control-input">
+            <button id="next-week" class="control-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        
+        <div id="calendar-container"></div>
+        <div id="form-container" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form action="https://formspree.io/f/mdoqdkqz" method="POST">
+                    <label for="name">Nom :</label>
+                    <input type="text" id="name" name="name" required>
+                    
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" name="email" required>
+                    
+                    <label for="date">Date :</label>
+                    <input type="date" id="date" name="date" required>
+                    
+                    <label for="time">Heure :</label>
+                    <select id="time" name="time" required>
+                        <!-- Les options d'horaire seront générées dynamiquement par JavaScript -->
+                    </select>
+                    
+                    <label for="message">Message :</label>
+                    <textarea id="message" name="message"></textarea>
+                    
+                    <button type="submit" class="btn">Confirmer le rendez-vous</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="saut"></div>
+    </main>
+
+    <footer id="footer">
+        <iframe src="footer.html" frameborder="0" scrolling="no"></iframe>
+    </footer>
+    <script src="script-calendar.js"></script>
+</body>
+</html>
