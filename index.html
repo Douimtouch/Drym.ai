@@ -19,40 +19,8 @@
     <div class="saut"></div>
     <div class="container">
 
-        <h1>Réserver un créneau de 15 minutes en un clic !</h1>
+        <h1> Accueil</h1>
 
-        <div class="calendar-controls">
-            <button id="prev-week" class="control-btn"><i class="fas fa-chevron-left"></i></button>
-            <input type="date" id="selected-date" class="control-input">
-            <button id="next-week" class="control-btn"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        
-        <div id="calendar-container"></div>
-        <div id="form-container" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <form action="https://formspree.io/f/mdoqdkqz" method="POST">
-                    <label for="name">Nom :</label>
-                    <input type="text" id="name" name="name" required>
-                    
-                    <label for="email">Email :</label>
-                    <input type="email" id="email" name="email" required>
-                    
-                    <label for="date">Date :</label>
-                    <input type="date" id="date" name="date" required>
-                    
-                    <label for="time">Heure :</label>
-                    <select id="time" name="time" required>
-                        <!-- Les options d'horaire seront générées dynamiquement par JavaScript -->
-                    </select>
-                    
-                    <label for="message">Message :</label>
-                    <textarea id="message" name="message"></textarea>
-                    
-                    <button type="submit" class="btn">Confirmer le rendez-vous</button>
-                </form>
-            </div>
-        </div>
     </div>
     <div class="saut"></div>
     </main>
@@ -60,6 +28,6 @@
     <footer id="footer">
         <iframe src="footer.html" frameborder="0" scrolling="no"></iframe>
     </footer>
-    <script src="script.js"></script>
+    <script src="script-calendar.js"></script>
 </body>
 </html>

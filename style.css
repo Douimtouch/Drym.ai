@@ -36,6 +36,16 @@ body {
     min-height: 100vh;
 }
 
+body {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+body.fade-in {
+    opacity: 1;
+}
+
+
 .container {
     max-width: auto;
     margin: 0 auto;
