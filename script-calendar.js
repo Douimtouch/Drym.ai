@@ -110,19 +110,46 @@ document.addEventListener('DOMContentLoaded', function() {
     function openForm(event) {
         const selectedDate = event.target.dataset.date;
         const selectedTime = event.target.dataset.time;
-
+    
         // Vérifier si l'horaire sélectionné est déjà passé
         const selectedDateTime = new Date(selectedDate + 'T' + selectedTime);
         if (selectedDateTime < new Date()) {
             alert("Vous ne pouvez pas sélectionner un horaire déjà passé.");
             return;
         }
-
+    
         dateInput.value = selectedDate;
         updateTimeSlots(selectedDate);
         timeInput.value = selectedTime;
+    
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', function() {
+            if (!validatePhoneNumber(phoneInput.value)) {
+                phoneInput.setCustomValidity('Veuillez entrer un numéro de téléphone valide (10 chiffres).');
+            } else {
+                phoneInput.setCustomValidity('');
+            }
+        });
 
+        phoneInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, ''); // Supprimer les caractères non numériques
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10); // Limiter à 10 chiffres
+            }
+        });
+    
+        phoneInput.addEventListener('keypress', function(event) {
+            if (event.keyCode < 48 || event.keyCode > 57) {
+                event.preventDefault(); // Empêcher la saisie de caractères non numériques
+            }
+        });
+    
         formContainer.style.display = 'block';
+    }
+
+    function validatePhoneNumber(phoneNumber) {
+        const phoneRegex = /^[0-9]{10}$/;
+        return phoneRegex.test(phoneNumber);
     }
 
     function updateTimeSlots(selectedDate) {
