@@ -2,11 +2,16 @@ const canvas = document.getElementById('backgroundCanvas');
 const ctx = canvas.getContext('2d');
 const points = [];
 const lines = [];
-const numPoints = 24;
 const maxDistance = 470;
 const minSize = 2;
 const maxSize = 5;
 const speed = 0.2;
+
+let isMobile = false;
+
+function checkMobileDevice() {
+    isMobile = window.innerWidth <= 768; // Ajustez cette valeur selon vos besoins
+}
 
 function init() {
     const container = canvas.parentElement;
@@ -23,9 +28,10 @@ function init() {
 }
 
 function createPoint() {
+    const margin = maxSize + 5;
     return {
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        x: Math.random() * (canvas.width - margin * 2) + margin,
+        y: Math.random() * (canvas.height - margin * 2) + margin,
         z: Math.random() * 100,
         vx: (Math.random() * 2 - 1) * speed,
         vy: (Math.random() * 2 - 1) * speed,
@@ -96,12 +102,24 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+checkMobileDevice();
 init();
 animate();
 
 window.addEventListener('resize', () => {
-    const container = canvas.parentElement;
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
-    init();
+    if (!isMobile) {
+        const container = canvas.parentElement;
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        init();
+    }
+});
+
+window.addEventListener('orientationchange', () => {
+    if (isMobile) {
+        const container = canvas.parentElement;
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        init();
+    }
 });
