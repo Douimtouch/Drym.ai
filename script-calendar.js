@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
     selectedDateInput.addEventListener('change', function() {
         currentDate = new Date(this.value);
         updateCalendar();
-        scrollToTop();
         centerSelectedDay();
         
     });
@@ -34,13 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
             formContainer.style.display = 'none';
         }
     });
-
-    function scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }
 
     function updateCalendar() {
         calendarContainer.innerHTML = '';
@@ -189,14 +181,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (selectedDay) {
             selectedDay.scrollIntoView({
                 behavior: 'smooth',
-                inline: 'center'
+                inline: 'center',
+                block: 'end'
                 
             });
         }
     }
     
     updateCalendar();
-    scrollToTop();
     centerSelectedDay();
 
 
