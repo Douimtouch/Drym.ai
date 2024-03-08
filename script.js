@@ -152,6 +152,13 @@ function handleResize() {
     const container = canvas.parentElement;
     canvas.width = container.clientWidth;
     canvas.height = container.clientHeight;
+    
+    if (selectedPoint) {
+        selectedPoint.expanded = false;
+        selectedPoint.element.style.display = 'none';
+        selectedPoint = null;
+    }
+    
     init();
 }
 
