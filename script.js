@@ -10,7 +10,26 @@ const speed = 0.2;
 let isMobile = false;
 
 function checkMobileDevice() {
-    isMobile = window.innerWidth <= 768; // Ajustez cette valeur selon vos besoins
+    isMobile = isMobileDevice();
+}
+
+function isMobileDevice() {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const mobileKeywords = [
+        'android',
+        'webos',
+        'iphone',
+        'ipad',
+        'ipod',
+        'blackberry',
+        'windows phone'
+    ];
+
+    const screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    const screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    const isSmallScreen = screenWidth <= 768 && screenHeight <= 1024;
+
+    return mobileKeywords.some(keyword => userAgent.includes(keyword)) || isSmallScreen;
 }
 
 function init() {
@@ -102,24 +121,25 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+function handleResize() {
+    const container = canvas.parentElement;
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+    init();
+}
+
 checkMobileDevice();
 init();
 animate();
 
 window.addEventListener('resize', () => {
     if (!isMobile) {
-        const container = canvas.parentElement;
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-        init();
+        handleResize();
     }
 });
 
 window.addEventListener('orientationchange', () => {
     if (isMobile) {
-        const container = canvas.parentElement;
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-        init();
+        setTimeout(handleResize, 100);
     }
 });
