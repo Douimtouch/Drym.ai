@@ -66,7 +66,7 @@ function handleTouchMove(event) {
             const dy = point.y - y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= point.size * 4.5) {
+            if (distance <= point.size * 5.5) {
                 isOverPoint = true;
                 break;
             }
@@ -85,7 +85,7 @@ function showTouchIndicator() {
     if (isMobile) {
         touchIndicatorInterval = setInterval(() => {
             touchIndicator.style.display = touchIndicator.style.display === 'none' ? 'block' : 'none';
-        }, 1);
+        }, 40);
     }
 }
 
