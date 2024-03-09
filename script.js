@@ -85,7 +85,7 @@ function showTouchIndicator() {
     if (isMobile) {
         touchIndicatorInterval = setInterval(() => {
             touchIndicator.style.display = touchIndicator.style.display === 'none' ? 'block' : 'none';
-        }, 20);
+        }, 1);
     }
 }
 
