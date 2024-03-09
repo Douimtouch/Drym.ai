@@ -66,7 +66,7 @@ function handleTouchMove(event) {
             const dy = point.y - y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= point.size * 1.5) {
+            if (distance <= point.size * 4.5) {
                 isOverPoint = true;
                 break;
             }
