@@ -10,8 +10,10 @@ const coloredPointSize = 22; // Taille des points de couleur
 const expandedPointSize = 100; // Taille des points cliqués
 const speed = 0.12;
 
+let cursorPosition = { x: 0, y: 0 };
 let isMobile = false;
 let selectedPoint = null;
+let draggedPoint = null;
 
 function checkMobileDevice() {
     isMobile = isMobileDevice();
@@ -22,6 +24,43 @@ function isMobileDevice() {
     return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
 }
 
+// Gestionnaire d'événements pour les mouvements de la souris
+canvas.addEventListener('mousemove', handleMouseMove);
+
+// Gestionnaire d'événements pour les touches sur l'écran (appareils mobiles)
+canvas.addEventListener('touchmove', handleTouchMove);
+
+// Gestionnaire d'événements pour le relâchement du clic de souris
+canvas.addEventListener('mouseup', handleMouseUp);
+
+function handleMouseMove(event) {
+    const rect = canvas.getBoundingClientRect();
+    cursorPosition.x = event.clientX - rect.left;
+    cursorPosition.y = event.clientY - rect.top;
+
+    if (draggedPoint) {
+        const margin = draggedPoint.color !== '#444444' ? coloredPointSize + 20 : maxSize + 5;
+        draggedPoint.x = Math.max(margin, Math.min(cursorPosition.x, canvas.width - margin));
+        draggedPoint.y = Math.max(margin, Math.min(cursorPosition.y, canvas.height - margin));
+    }
+}
+
+function handleTouchMove(event) {
+    event.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    cursorPosition.x = event.touches[0].clientX - rect.left;
+    cursorPosition.y = event.touches[0].clientY - rect.top;
+
+    if (draggedPoint) {
+        const margin = draggedPoint.color !== '#444444' ? coloredPointSize + 20 : maxSize + 5;
+        draggedPoint.x = Math.max(margin, Math.min(cursorPosition.x, canvas.width - margin));
+        draggedPoint.y = Math.max(margin, Math.min(cursorPosition.y, canvas.height - margin));
+    }
+}
+
+function handleMouseUp() {
+    draggedPoint = null;
+}
 
 function init() {
     const container = canvas.parentElement;
@@ -66,10 +105,8 @@ function update() {
     const margin = maxSize + 5;
     const coloredMargin = coloredPointSize + 20; // Marge plus grande pour les points de couleur
 
-
-
     points.forEach(point => {
-        if (!point.expanded) {
+        if (!point.expanded && point !== draggedPoint) {
             if (selectedPoint) {
                 const dx = point.x - selectedPoint.x;
                 const dy = point.y - selectedPoint.y;
@@ -176,7 +213,10 @@ function draw() {
 
     sortedPoints.forEach(point => {
         if (point !== selectedPoint) {
-            const size = point.size;
+            const dx = point.x - cursorPosition.x;
+            const dy = point.y - cursorPosition.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const size = distance < 50 ? point.size * 1.5 : point.size;
             ctx.fillStyle = point.color;
             ctx.beginPath();
             ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
@@ -232,13 +272,17 @@ function handlePointClick(event) {
         }
     }
 
-    points.forEach(point => {
-        if (point.element) {
-            const dx = point.x - x;
-            const dy = point.y - y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+    let pointClicked = false;
 
-            if (distance <= point.size) {
+    for (let i = points.length - 1; i >= 0; i--) {
+        const point = points[i];
+        const dx = point.x - x;
+        const dy = point.y - y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance <= point.size) {
+            if (point.element && !pointClicked) {
+                pointClicked = true;
                 if (selectedPoint === point) {
                     selectedPoint = null;
                     point.expanded = false;
@@ -259,9 +303,16 @@ function handlePointClick(event) {
                     point.element.style.top = point.y + 'px';
                     point.element.style.transform = 'translate(-50%, -50%)';
                 }
+            } else if (!pointClicked) {
+                draggedPoint = point;
             }
+            return;
         }
-    });
+    }
+
+    if (!pointClicked && !selectedPoint) {
+        draggedPoint = null;
+    }
 }
 
 checkMobileDevice();
@@ -280,4 +331,5 @@ window.addEventListener('orientationchange', () => {
     }
 });
 
-canvas.addEventListener('click', handlePointClick);
+canvas.addEventListener('mousedown', handlePointClick);
+canvas.addEventListener('touchstart', handlePointClick);
