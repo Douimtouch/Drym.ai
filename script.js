@@ -66,7 +66,6 @@ function update() {
     const margin = maxSize + 5;
 
 
-
     points.forEach(point => {
         if (!point.expanded) {
             if (selectedPoint) {
@@ -77,8 +76,24 @@ function update() {
                 if (distance < expandedPointSize * 2) {
                     const angle = Math.atan2(dy, dx);
                     const repulsionForce = (expandedPointSize * 2 - distance) / (expandedPointSize * 2);
-                    point.x += Math.cos(angle) * repulsionForce * 2;
-                    point.y += Math.sin(angle) * repulsionForce * 2;
+                    const repulsionX = Math.cos(angle) * repulsionForce * 2;
+                    const repulsionY = Math.sin(angle) * repulsionForce * 2;
+
+                    point.x += repulsionX;
+                    point.y += repulsionY;
+
+                    // Vérifier si le point est poussé hors du cadre
+                    if (point.x < margin) {
+                        point.x = margin;
+                    } else if (point.x > canvas.width - margin) {
+                        point.x = canvas.width - margin;
+                    }
+
+                    if (point.y < margin) {
+                        point.y = margin;
+                    } else if (point.y > canvas.height - margin) {
+                        point.y = canvas.height - margin;
+                    }
                 }
             }
 
