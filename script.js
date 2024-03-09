@@ -175,12 +175,22 @@ function draw() {
     });
 
     sortedPoints.forEach(point => {
-        const size = point.expanded ? expandedPointSize : point.size;
-        ctx.fillStyle = point.color;
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
-        ctx.fill();
+        if (point !== selectedPoint) {
+            const size = point.size;
+            ctx.fillStyle = point.color;
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+            ctx.fill();
+        }
     });
+
+    if (selectedPoint) {
+        const size = expandedPointSize;
+        ctx.fillStyle = selectedPoint.color;
+        ctx.beginPath();
+        ctx.arc(selectedPoint.x, selectedPoint.y, size, 0, Math.PI * 2);
+        ctx.fill();
+    }
 }
 
 function animate() {
