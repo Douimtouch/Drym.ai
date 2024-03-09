@@ -45,12 +45,15 @@ body.fade-in {
     opacity: 1;
 }
 
+
 .canvas-container {
     position: relative;
     width: 100%;
     min-height: 500px;
     max-height: 500px;
     overflow: hidden;
+    scrollbar-width: thin; /* Masque la scrollbar pour Firefox */
+    -ms-overflow-style: thin; /* Masque la scrollbar pour IE et Edge */
 }
 
 #backgroundCanvas {

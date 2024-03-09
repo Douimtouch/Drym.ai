@@ -14,6 +14,7 @@ let cursorPosition = { x: 0, y: 0 };
 let isMobile = false;
 let selectedPoint = null;
 let draggedPoint = null;
+let isScrolling = false;
 
 function checkMobileDevice() {
     isMobile = isMobileDevice();
@@ -24,14 +25,6 @@ function isMobileDevice() {
     return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
 }
 
-// Gestionnaire d'événements pour les mouvements de la souris
-canvas.addEventListener('mousemove', handleMouseMove);
-
-// Gestionnaire d'événements pour les touches sur l'écran (appareils mobiles)
-canvas.addEventListener('touchmove', handleTouchMove);
-
-// Gestionnaire d'événements pour le relâchement du clic de souris
-canvas.addEventListener('mouseup', handleMouseUp);
 
 function handleMouseMove(event) {
     const rect = canvas.getBoundingClientRect();
@@ -54,10 +47,15 @@ function handleTouchMove(event) {
         const margin = draggedPoint.color !== '#444444' ? coloredPointSize + 20 : maxSize + 5;
         draggedPoint.x = Math.max(margin, Math.min(x, canvas.width - margin));
         draggedPoint.y = Math.max(margin, Math.min(y, canvas.height - margin));
-    } 
-
+    } else if (!selectedPoint && !isScrolling) {
+        isScrolling = true;
+        setTimeout(() => {
+            isScrolling = false;
+        }, 100);
+    } else {
+        event.preventDefault();
+    }
 }
-
 function handleMouseUp() {
     draggedPoint = null;
 }
@@ -255,6 +253,7 @@ function handleResize() {
 }
 
 function handlePointClick(event) {
+    if (isScrolling) return;
     event.preventDefault();
 
     const rect = canvas.getBoundingClientRect();
@@ -285,7 +284,7 @@ function handlePointClick(event) {
             const dy = point.y - y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= point.size * 1.5) {
+            if (distance <= point.size * 2.2) {
                 pointClicked = true;
                 if (selectedPoint === point) {
                     selectedPoint = null;
@@ -356,8 +355,17 @@ canvas.addEventListener('touchstart', handlePointClick);
 
 // Gestionnaire d'événements pour le déplacement de la souris et le déplacement du doigt
 canvas.addEventListener('mousemove', handleMouseMove);
-canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+canvas.addEventListener('touchmove', handleTouchMove);
 
 // Gestionnaire d'événements pour le relâchement du clic de souris et la fin du toucher
 canvas.addEventListener('mouseup', handleMouseUp);
 canvas.addEventListener('touchend', handleMouseUp);
+
+// Gestionnaire d'événements pour les mouvements de la souris
+canvas.addEventListener('mousemove', handleMouseMove);
+
+// Gestionnaire d'événements pour les touches sur l'écran (appareils mobiles)
+canvas.addEventListener('touchmove', handleTouchMove);
+
+// Gestionnaire d'événements pour le relâchement du clic de souris
+canvas.addEventListener('mouseup', handleMouseUp);
