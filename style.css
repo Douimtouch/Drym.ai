@@ -111,6 +111,7 @@ body.fade-in {
 }
 
 h1 {
+    margin-top: -50px;
     text-align: center;
     margin-bottom: 25px;
     color: #000000;

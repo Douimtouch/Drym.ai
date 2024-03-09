@@ -213,6 +213,21 @@ footer {
     color: #0056b3;
 }
 
+
+@media screen and (max-width: 485px) { 
+
+    .header-logo {
+        position: absolute;
+        height: 105px;
+        top: 130%;
+        right: 0;
+        transform: translateY(-50%);
+        margin-right: 45px;
+    }
+
+}
+
+
 @media screen and (max-width: 385px) { 
 
     .header-logo {
