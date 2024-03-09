@@ -1,6 +1,7 @@
 /* blocs primaires */
 
 
+
 /* ---------------- */
 
 
@@ -114,12 +115,18 @@ header {
     margin: -120px 0 0 -50px;
     padding: 50px;
     padding-top: 125px;
-
     list-style-type: none;
     -webkit-font-smoothing: antialiased;
     transform-origin: 0% 0%;
     transform: translate(-100%, 0);
     transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
+    max-height: 0;
+    overflow: hidden;
+}
+
+#menuToggle input:checked ~ #menu {
+    transform: none;
+    max-height: 1000px; /* Ajustez cette valeur selon vos besoins */
 }
 
 #menu li {
@@ -214,7 +221,22 @@ footer {
 }
 
 
-@media screen and (max-width: 485px) { 
+
+@media screen and (max-width: 865px) { 
+
+    .header-logo {
+        position: absolute;
+        height: 115px;
+        top: 130%;
+        right: 0;
+        transform: translateY(-50%);
+        margin-right: 45px;
+    }
+
+}
+
+
+@media screen and (max-width: 565px) { 
 
     .header-logo {
         position: absolute;

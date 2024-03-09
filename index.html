@@ -7,17 +7,16 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+    
 </head>
 <body class="fade-in">
     <header id="header">
-        <iframe src="header.html" frameborder="0" scrolling="no"></iframe>
+        <iframe src="header.html" frameborder="0" scrolling="no" allow-scripts></iframe>
     </header>
 
 
 
     <main>
-        <div class="saut"></div>
 
         <div class="container">
 
@@ -62,6 +61,16 @@
     <footer id="footer">
         <iframe src="footer.html" frameborder="0" scrolling="no"></iframe>
     </footer>
+    
+    <script>
+        // Écouter les messages de l'iframe
+        window.addEventListener('message', function(event) {
+            if (event.data.height) {
+                document.querySelector('header iframe').style.height = event.data.height + 'px';
+            }
+        }, false);
+    </script>
+
     <script src="script.js"></script>
 </body>
 </html>

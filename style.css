@@ -8,10 +8,14 @@
 
 
 iframe, header iframe { 
-    display: block;
-    height: 245px;
-    position: absolute;
+    display: flex;
+    max-height: 350px;
+    min-height: 150px;
+    height: 150px;
+    position: relative;
+    transition: height 0.3s ease;
 }
+
 
 iframe, footer iframe {
     width: 100%;
@@ -111,7 +115,6 @@ body.fade-in {
 }
 
 h1 {
-    margin-top: -50px;
     text-align: center;
     margin-bottom: 25px;
     color: #000000;
@@ -280,6 +283,11 @@ input, textarea {
 }
 
 @media screen and (max-width: 768px) {
+
+    iframe, header iframe {
+
+        transition: height 0.3s ease;
+    }
 
     #backgroundCanvas {
         position: absolute;
