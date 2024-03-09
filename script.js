@@ -332,7 +332,7 @@ function handlePointClick(event) {
             const dy = point.y - y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= point.size + 5.2) {
+            if (distance <= point.size + 20) { // Augmenter la zone cliquable (solution 2)
                 pointClicked = true;
                 hideTouchIndicator();
                 if (selectedPoint === point) {
@@ -370,9 +370,9 @@ function handlePointClick(event) {
             if (!point.element) {
                 const dx = point.x - x;
                 const dy = point.y - y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                const distance = Math.sqrt(dx * dx + dy * dy); // Utiliser la distance euclidienne (solution 13)
 
-                if (distance <= point.size * 1.5) {
+                if (distance <= point.size * 8.5) {
                     draggedPoint = point;
                     hideTouchIndicator();
                     return;
@@ -388,6 +388,10 @@ function handlePointClick(event) {
         }
     }
 }
+
+
+
+
 
 checkMobileDevice();
 if (isMobile) {
