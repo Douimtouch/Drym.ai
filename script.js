@@ -54,11 +54,8 @@ function handleTouchMove(event) {
         const margin = draggedPoint.color !== '#444444' ? coloredPointSize + 20 : maxSize + 5;
         draggedPoint.x = Math.max(margin, Math.min(x, canvas.width - margin));
         draggedPoint.y = Math.max(margin, Math.min(y, canvas.height - margin));
-    } else {
-        // Permettre le défilement lorsque l'utilisateur n'appuie pas sur un point
-        event.preventDefault();
-        handleMouseMove(event.touches[0]);
-    }
+    } 
+
 }
 
 function handleMouseUp() {
@@ -264,12 +261,15 @@ function handlePointClick(event) {
     const x = event.type === 'touchstart' ? event.touches[0].clientX - rect.left : event.clientX - rect.left;
     const y = event.type === 'touchstart' ? event.touches[0].clientY - rect.top : event.clientY - rect.top;
 
+    let pointClicked = false;
+
+    // Vérifier si le point sélectionné a été cliqué
     if (selectedPoint) {
         const dx = selectedPoint.x - x;
         const dy = selectedPoint.y - y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance <= expandedPointSize * 3.5) {
+        if (distance <= expandedPointSize) {
             selectedPoint.expanded = false;
             selectedPoint.element.style.display = 'none';
             selectedPoint = null;
@@ -277,16 +277,15 @@ function handlePointClick(event) {
         }
     }
 
-    let pointClicked = false;
-
+    // Parcourir d'abord les points de couleur
     for (let i = points.length - 1; i >= 0; i--) {
         const point = points[i];
-        const dx = point.x - x;
-        const dy = point.y - y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (point.element) {
+            const dx = point.x - x;
+            const dy = point.y - y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance <= point.size * 1.5) {
-            if (point.element && !pointClicked) {
+            if (distance <= point.size * 1.5) {
                 pointClicked = true;
                 if (selectedPoint === point) {
                     selectedPoint = null;
@@ -308,14 +307,29 @@ function handlePointClick(event) {
                     point.element.style.top = point.y + 'px';
                     point.element.style.transform = 'translate(-50%, -50%)';
                 }
-            } else if (!pointClicked) {
-                draggedPoint = point;
+                return;
             }
-            return;
         }
     }
 
-    if (!pointClicked && !selectedPoint) {
+    // Si aucun point de couleur n'a été cliqué, vérifier les points noirs
+    if (!pointClicked) {
+        for (let i = points.length - 1; i >= 0; i--) {
+            const point = points[i];
+            if (!point.element) {
+                const dx = point.x - x;
+                const dy = point.y - y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance <= point.size * 1.5) {
+                    draggedPoint = point;
+                    return;
+                }
+            }
+        }
+    }
+
+    if (!pointClicked) {
         draggedPoint = null;
     }
 }
