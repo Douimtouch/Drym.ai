@@ -9,11 +9,13 @@ const maxSize = 14;
 const coloredPointSize = 22; // Taille des points de couleur
 const expandedPointSize = 100; // Taille des points cliqués
 const speed = 0.12;
+const touchIndicator = document.getElementById('touchIndicator');
 
 let cursorPosition = { x: 0, y: 0 };
 let isMobile = false;
 let selectedPoint = null;
 let draggedPoint = null;
+let touchStartPosition = { x: 0, y: 0 };
 
 function checkMobileDevice() {
     isMobile = isMobileDevice();
@@ -23,7 +25,6 @@ function isMobileDevice() {
     const userAgent = navigator.userAgent.toLowerCase();
     return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
 }
-
 
 function handleMouseMove(event) {
     const rect = canvas.getBoundingClientRect();
@@ -37,6 +38,12 @@ function handleMouseMove(event) {
     }
 }
 
+function handleTouchStart(event) {
+    const rect = canvas.getBoundingClientRect();
+    touchStartPosition.x = event.touches[0].clientX - rect.left;
+    touchStartPosition.y = event.touches[0].clientY - rect.top;
+}
+
 function handleTouchMove(event) {
     if (draggedPoint) {
         event.preventDefault();
@@ -46,13 +53,49 @@ function handleTouchMove(event) {
         const margin = draggedPoint.color !== '#444444' ? coloredPointSize + 20 : maxSize + 5;
         draggedPoint.x = Math.max(margin, Math.min(x, canvas.width - margin));
         draggedPoint.y = Math.max(margin, Math.min(y, canvas.height - margin));
-    } else if (!selectedPoint) {
-        // Permettre le défilement si aucun point n'est sélectionné ou en cours de glissement
-        return;
-    } else {
-        event.preventDefault();
+    } else if (!selectedPoint && event.touches.length === 1) {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.touches[0].clientX - rect.left;
+        const y = event.touches[0].clientY - rect.top;
+
+        // Vérifier si le doigt est au-dessus d'un point
+        let isOverPoint = false;
+        for (let i = 0; i < points.length; i++) {
+            const point = points[i];
+            const dx = point.x - x;
+            const dy = point.y - y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance <= point.size * 1.5) {
+                isOverPoint = true;
+                break;
+            }
+        }
+
+        if (isOverPoint) {
+            hideTouchIndicator();
+        } else {
+            showTouchIndicator();
+        }
     }
 }
+let touchIndicatorInterval;
+
+function showTouchIndicator() {
+    if (isMobile) {
+        touchIndicatorInterval = setInterval(() => {
+            touchIndicator.style.display = touchIndicator.style.display === 'none' ? 'block' : 'none';
+        }, 20);
+    }
+}
+
+function hideTouchIndicator() {
+    if (isMobile) {
+        clearInterval(touchIndicatorInterval);
+        touchIndicator.style.display = 'none';
+    }
+}
+
 
 function handleMouseUp() {
     draggedPoint = null;
@@ -240,17 +283,22 @@ function handleResize() {
     const container = canvas.parentElement;
     canvas.width = container.clientWidth;
     canvas.height = container.clientHeight;
-    
+
     if (selectedPoint) {
         selectedPoint.expanded = false;
         selectedPoint.element.style.display = 'none';
         selectedPoint = null;
     }
-    
+
     init();
 }
 
 function handlePointClick(event) {
+    if (event.type === 'touchstart' && event.touches.length > 1) {
+        // Ignorer le clic si plusieurs doigts sont sur l'écran
+        return;
+    }
+
     event.preventDefault();
 
     const rect = canvas.getBoundingClientRect();
@@ -269,6 +317,9 @@ function handlePointClick(event) {
             selectedPoint.expanded = false;
             selectedPoint.element.style.display = 'none';
             selectedPoint = null;
+            if (isMobile) {
+                showTouchIndicator();
+            }
             return;
         }
     }
@@ -283,10 +334,14 @@ function handlePointClick(event) {
 
             if (distance <= point.size * 2.2) {
                 pointClicked = true;
+                hideTouchIndicator();
                 if (selectedPoint === point) {
                     selectedPoint = null;
                     point.expanded = false;
                     point.element.style.display = 'none';
+                    if (isMobile) {
+                        showTouchIndicator();
+                    }
                 } else {
                     if (selectedPoint) {
                         selectedPoint.expanded = false;
@@ -319,6 +374,7 @@ function handlePointClick(event) {
 
                 if (distance <= point.size * 1.5) {
                     draggedPoint = point;
+                    hideTouchIndicator();
                     return;
                 }
             }
@@ -327,10 +383,16 @@ function handlePointClick(event) {
 
     if (!pointClicked) {
         draggedPoint = null;
+        if (!selectedPoint && isMobile) {
+            showTouchIndicator();
+        }
     }
 }
 
 checkMobileDevice();
+if (isMobile) {
+    showTouchIndicator();
+}
 init();
 animate();
 
@@ -363,6 +425,12 @@ canvas.addEventListener('mousemove', handleMouseMove);
 
 // Gestionnaire d'événements pour les touches sur l'écran (appareils mobiles)
 canvas.addEventListener('touchmove', handleTouchMove);
+canvas.addEventListener('touchend', handleTouchEnd);
 
 // Gestionnaire d'événements pour le relâchement du clic de souris
 canvas.addEventListener('mouseup', handleMouseUp);
+
+// Gestionnaire d'événements pour empêcher le zoom par défaut sur les appareils mobiles
+canvas.addEventListener('gesturestart', function(event) {
+    event.preventDefault();
+});
