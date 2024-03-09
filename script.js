@@ -54,6 +54,10 @@ function handleTouchMove(event) {
         const margin = draggedPoint.color !== '#444444' ? coloredPointSize + 20 : maxSize + 5;
         draggedPoint.x = Math.max(margin, Math.min(x, canvas.width - margin));
         draggedPoint.y = Math.max(margin, Math.min(y, canvas.height - margin));
+    } else {
+        // Permettre le défilement lorsque l'utilisateur n'appuie pas sur un point
+        event.preventDefault();
+        handleMouseMove(event.touches[0]);
     }
 }
 
@@ -260,13 +264,12 @@ function handlePointClick(event) {
     const x = event.type === 'touchstart' ? event.touches[0].clientX - rect.left : event.clientX - rect.left;
     const y = event.type === 'touchstart' ? event.touches[0].clientY - rect.top : event.clientY - rect.top;
 
-
     if (selectedPoint) {
         const dx = selectedPoint.x - x;
         const dy = selectedPoint.y - y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance <= expandedPointSize) {
+        if (distance <= expandedPointSize * 3.5) {
             selectedPoint.expanded = false;
             selectedPoint.element.style.display = 'none';
             selectedPoint = null;
@@ -282,7 +285,7 @@ function handlePointClick(event) {
         const dy = point.y - y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance <= point.size) {
+        if (distance <= point.size * 1.5) {
             if (point.element && !pointClicked) {
                 pointClicked = true;
                 if (selectedPoint === point) {
