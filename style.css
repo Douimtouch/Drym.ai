@@ -66,14 +66,15 @@ body.fade-in {
     position: absolute;
     display: none;
     z-index: 1;
+
 }
 
 .point-content {
-
-    height: 110%;
-    width: 80%;
-    padding: 20px;
-    margin-left: 20px;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    padding: 0px;
+    margin-left: 0px;
     border-radius: 5px;
 
 }
@@ -98,6 +99,7 @@ h1 {
     text-align: center;
     margin-bottom: 20px;
     color: #000000;
+    font-weight: 100;
 }
 
 .calendar-controls {

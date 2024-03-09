@@ -64,6 +64,8 @@ function hideAllElements() {
 
 function update() {
     const margin = maxSize + 5;
+    const coloredMargin = coloredPointSize + 20; // Marge plus grande pour les points de couleur
+
 
 
     points.forEach(point => {
@@ -83,16 +85,32 @@ function update() {
                     point.y += repulsionY;
 
                     // Vérifier si le point est poussé hors du cadre
-                    if (point.x < margin) {
-                        point.x = margin;
-                    } else if (point.x > canvas.width - margin) {
-                        point.x = canvas.width - margin;
-                    }
+                    if (point.color !== '#444444') {
+                        // Utiliser la marge plus grande pour les points de couleur
+                        if (point.x < coloredMargin) {
+                            point.x = coloredMargin;
+                        } else if (point.x > canvas.width - coloredMargin) {
+                            point.x = canvas.width - coloredMargin;
+                        }
 
-                    if (point.y < margin) {
-                        point.y = margin;
-                    } else if (point.y > canvas.height - margin) {
-                        point.y = canvas.height - margin;
+                        if (point.y < coloredMargin) {
+                            point.y = coloredMargin;
+                        } else if (point.y > canvas.height - coloredMargin) {
+                            point.y = canvas.height - coloredMargin;
+                        }
+                    } else {
+                        // Utiliser la marge normale pour les points noirs
+                        if (point.x < margin) {
+                            point.x = margin;
+                        } else if (point.x > canvas.width - margin) {
+                            point.x = canvas.width - margin;
+                        }
+
+                        if (point.y < margin) {
+                            point.y = margin;
+                        } else if (point.y > canvas.height - margin) {
+                            point.y = canvas.height - margin;
+                        }
                     }
                 }
             }
@@ -101,8 +119,17 @@ function update() {
             point.y += point.vy;
             point.z += point.vz;
 
-            if (point.x < margin || point.x > canvas.width - margin) point.vx *= -1;
-            if (point.y < margin || point.y > canvas.height - margin) point.vy *= -1;
+            // Vérifier si le point est un point de couleur ou un point noir
+            if (point.color !== '#444444') {
+                // Utiliser la marge plus grande pour les points de couleur
+                if (point.x < coloredMargin || point.x > canvas.width - coloredMargin) point.vx *= -1;
+                if (point.y < coloredMargin || point.y > canvas.height - coloredMargin) point.vy *= -1;
+            } else {
+                // Utiliser la marge normale pour les points noirs
+                if (point.x < margin || point.x > canvas.width - margin) point.vx *= -1;
+                if (point.y < margin || point.y > canvas.height - margin) point.vy *= -1;
+            }
+
             if (point.z < 0 || point.z > 100) point.vz *= -1;
         }
     });
