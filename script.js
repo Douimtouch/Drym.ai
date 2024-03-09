@@ -46,15 +46,14 @@ function handleMouseMove(event) {
 }
 
 function handleTouchMove(event) {
-    event.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    cursorPosition.x = event.touches[0].clientX - rect.left;
-    cursorPosition.y = event.touches[0].clientY - rect.top;
-
     if (draggedPoint) {
+        event.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const x = event.touches[0].clientX - rect.left;
+        const y = event.touches[0].clientY - rect.top;
         const margin = draggedPoint.color !== '#444444' ? coloredPointSize + 20 : maxSize + 5;
-        draggedPoint.x = Math.max(margin, Math.min(cursorPosition.x, canvas.width - margin));
-        draggedPoint.y = Math.max(margin, Math.min(cursorPosition.y, canvas.height - margin));
+        draggedPoint.x = Math.max(margin, Math.min(x, canvas.width - margin));
+        draggedPoint.y = Math.max(margin, Math.min(y, canvas.height - margin));
     }
 }
 
@@ -255,9 +254,12 @@ function handleResize() {
 }
 
 function handlePointClick(event) {
+    event.preventDefault();
+
     const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const x = event.type === 'touchstart' ? event.touches[0].clientX - rect.left : event.clientX - rect.left;
+    const y = event.type === 'touchstart' ? event.touches[0].clientY - rect.top : event.clientY - rect.top;
+
 
     if (selectedPoint) {
         const dx = selectedPoint.x - x;
@@ -331,5 +333,14 @@ window.addEventListener('orientationchange', () => {
     }
 });
 
+// Gestionnaire d'événements pour le clic de souris et le début du toucher
 canvas.addEventListener('mousedown', handlePointClick);
 canvas.addEventListener('touchstart', handlePointClick);
+
+// Gestionnaire d'événements pour le déplacement de la souris et le déplacement du doigt
+canvas.addEventListener('mousemove', handleMouseMove);
+canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+// Gestionnaire d'événements pour le relâchement du clic de souris et la fin du toucher
+canvas.addEventListener('mouseup', handleMouseUp);
+canvas.addEventListener('touchend', handleMouseUp);
