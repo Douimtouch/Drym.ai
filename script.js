@@ -66,7 +66,7 @@ function handleTouchMove(event) {
             const dy = point.y - y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= point.size * 5.5) {
+            if (distance <= point.size + 5.8) {
                 isOverPoint = true;
                 break;
             }
@@ -85,7 +85,7 @@ function showTouchIndicator() {
     if (isMobile) {
         touchIndicatorInterval = setInterval(() => {
             touchIndicator.style.display = touchIndicator.style.display === 'none' ? 'block' : 'none';
-        }, 40);
+        }, 13.5);
     }
 }
 
@@ -332,7 +332,7 @@ function handlePointClick(event) {
             const dy = point.y - y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= point.size * 2.2) {
+            if (distance <= point.size + 25.2) {
                 pointClicked = true;
                 hideTouchIndicator();
                 if (selectedPoint === point) {
