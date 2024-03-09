@@ -15,6 +15,10 @@ let isMobile = false;
 let selectedPoint = null;
 let draggedPoint = null;
 let isScrolling = false;
+let isDragging = false;
+let startY = 0;
+let scrollTop = 0;
+let scrollDiv = null; // <-- Renommer la variable
 
 function checkMobileDevice() {
     isMobile = isMobileDevice();
@@ -38,6 +42,36 @@ function handleMouseMove(event) {
     }
 }
 
+
+function handleTouchStart(event) {
+    if (!selectedPoint && !draggedPoint) {
+        isDragging = true;
+        startY = event.touches[0].clientY;
+
+        // Créer la div
+        scrollDiv = document.createElement('div'); // <-- Mettre à jour le nom de la variable
+        scrollDiv.classList.add('scroll');
+
+        // Définir la position absolue de la div
+        scrollDiv.style.position = 'absolute';
+        scrollDiv.style.left = event.touches[0].clientX + 'px';
+        scrollDiv.style.top = event.touches[0].clientY + 'px';
+
+        // Ajouter la div au document
+        document.body.appendChild(scrollDiv);
+    }
+}
+
+function handleTouchEnd() {
+    isDragging = false;
+
+    // Supprimer la div
+    if (scrollDiv) { // <-- Mettre à jour le nom de la variable
+        document.body.removeChild(scrollDiv);
+        scrollDiv = null; // <-- Mettre à jour le nom de la variable
+    }
+}
+
 function handleTouchMove(event) {
     if (draggedPoint) {
         event.preventDefault();
@@ -47,17 +81,18 @@ function handleTouchMove(event) {
         const margin = draggedPoint.color !== '#444444' ? coloredPointSize + 20 : maxSize + 5;
         draggedPoint.x = Math.max(margin, Math.min(x, canvas.width - margin));
         draggedPoint.y = Math.max(margin, Math.min(y, canvas.height - margin));
-    } else if (!selectedPoint && !isScrolling) {
-        isScrolling = true;
-        setTimeout(() => {
-            isScrolling = false;
-        }, 100);
-    } else {
+    } else if (isDragging) {
         event.preventDefault();
+        const deltaY = event.touches[0].clientY - startY;
+        scrollTop = Math.max(0, Math.min(scrollTop - deltaY, canvas.height - window.innerHeight));
+        canvas.style.transform = `translateY(-${scrollTop}px)`;
+
+        // Mettre à jour la position de la div
+        if (scrollDiv) { // <-- Mettre à jour le nom de la variable
+            scrollDiv.style.left = event.touches[0].clientX + 'px';
+            scrollDiv.style.top = event.touches[0].clientY + 'px';
+        }
     }
-}
-function handleMouseUp() {
-    draggedPoint = null;
 }
 
 function init() {
@@ -369,3 +404,6 @@ canvas.addEventListener('touchmove', handleTouchMove);
 
 // Gestionnaire d'événements pour le relâchement du clic de souris
 canvas.addEventListener('mouseup', handleMouseUp);
+
+canvas.addEventListener('touchstart', handleTouchStart);
+canvas.addEventListener('touchend', handleTouchEnd);

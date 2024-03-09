@@ -45,6 +45,12 @@ body.fade-in {
     opacity: 1;
 }
 
+.scroll {
+    position: absolute;
+    background-color: #0056b3;
+    height: 30px;
+    width: 30px;
+}
 
 .canvas-container {
     position: relative;
