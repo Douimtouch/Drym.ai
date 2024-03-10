@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
             item.addEventListener('click', function(event) {
                 event.stopPropagation();
                 this.classList.toggle('active');
+                // Empêcher la mise à jour de la taille de l'iframe lors de la fermeture du sous-menu
+                if (!this.classList.contains('active')) {
+                    event.preventDefault();
+                }
             });
         }
     });
@@ -38,10 +42,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function adjustIframeHeight() {
         const isMenuOpen = menuItems.classList.contains('active');
-        const headerHeight = document.querySelector('header').offsetHeight;
-        const menuHeight = menuItems.offsetHeight;
-        const iframeHeight = isMenuOpen ? menuHeight : headerHeight;
-        window.parent.postMessage({ height: iframeHeight }, '*');
+        if (isMenuOpen) {
+            const headerHeight = document.querySelector('header').offsetHeight;
+            const menuHeight = menuItems.offsetHeight;
+            const iframeHeight = menuHeight;
+            window.parent.postMessage({ height: iframeHeight }, '*');
+        }
     }
 
     menuItems.addEventListener('transitionend', function() {
