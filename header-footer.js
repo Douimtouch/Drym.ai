@@ -24,7 +24,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(event) {
         const target = event.target;
         if (!menuToggle.contains(target) && !menuItems.contains(target)) {
-            menuItems.classList.remove('active');
+            const iframeHeight = window.parent.document.querySelector('header iframe').offsetHeight;
+            const headerHeight = document.querySelector('header').offsetHeight;
+            const menuHeight = menuItems.offsetHeight;
+            
+            if (iframeHeight === headerHeight || iframeHeight === menuHeight) {
+                menuItems.classList.remove('active');
+            }
         }
     });
 
