@@ -281,6 +281,15 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
+function handleTouchEnd(event) {
+    if (draggedPoint) {
+        draggedPoint = null;
+    }
+    if (!selectedPoint && isMobile) {
+        showTouchIndicator();
+    }
+}
+
 function handleResize() {
     hideAllElements();
     const container = canvas.parentElement;
@@ -434,6 +443,7 @@ canvas.addEventListener('mousemove', handleMouseMove);
 
 // Gestionnaire d'événements pour les touches sur l'écran (appareils mobiles)
 canvas.addEventListener('touchmove', handleTouchMove);
+canvas.addEventListener('touchend', handleTouchEnd);
 
 // Gestionnaire d'événements pour le relâchement du clic de souris
 canvas.addEventListener('mouseup', handleMouseUp);

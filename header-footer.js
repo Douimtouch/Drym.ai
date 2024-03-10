@@ -15,10 +15,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     dropdownItems.forEach(function(item) {
-        item.addEventListener('click', function(event) {
-            event.stopPropagation();
-            this.classList.toggle('active');
-        });
+        if (item) {
+            item.addEventListener('click', function(event) {
+                event.stopPropagation();
+                this.classList.toggle('active');
+            });
+        }
     });
 
     document.addEventListener('click', function(event) {
