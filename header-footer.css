@@ -136,6 +136,10 @@ header {
     max-height: 180px; /* Ajustez cette valeur selon vos besoins */
 }
 
+#menuToggle input:unchecked ~ #menu {
+    max-height: 0px; /* Ajustez cette valeur selon vos besoins */
+}
+
 #menu li {
     padding: 3px 0;
     font-size: 16;
