@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menuToggle');
     const menuItems = document.getElementById('menu');
     const dropdownItems = document.querySelectorAll('.dropdown');
-    const threshold = 150; // Seuil de taille en pixels
+    const threshold = 120; // Seuil de taille en pixels
 
     function toggleMenu() {
         menuItems.classList.toggle('active');
