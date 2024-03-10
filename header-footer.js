@@ -25,18 +25,28 @@ document.addEventListener('DOMContentLoaded', function() {
         const target = event.target;
         if (!menuToggle.contains(target) && !menuItems.contains(target)) {
             menuItems.classList.remove('active');
-            adjustIframeHeight();
         }
-    });
-
-    window.addEventListener('resize', function() {
-        adjustIframeHeight();
     });
 
     function adjustIframeHeight() {
         const isMenuOpen = menuItems.classList.contains('active');
         const headerHeight = document.querySelector('header').offsetHeight;
-        const iframeHeight = isMenuOpen ? headerHeight + menuItems.offsetHeight : headerHeight;
+        const menuHeight = menuItems.offsetHeight;
+        const iframeHeight = isMenuOpen ? menuHeight : headerHeight;
         window.parent.postMessage({ height: iframeHeight }, '*');
     }
+
+    menuItems.addEventListener('transitionend', function() {
+        adjustIframeHeight();
+    });
+
+    // Fermer le menu lors du chargement de la page ou d'un retour en arrière
+    window.addEventListener('pageshow', function(event) {
+        const menuCheckbox = document.getElementById('menuCheckbox');
+        if (menuCheckbox.checked) {
+            menuCheckbox.checked = false;
+            menuItems.classList.remove('active');
+            adjustIframeHeight();
+        }
+    });
 });

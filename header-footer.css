@@ -26,6 +26,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    pointer-events: none;
 }
 
 .header-logo {
@@ -35,6 +36,7 @@ header {
     right: 0;
     transform: translateY(-50%);
     margin-right: 65px;
+    pointer-events: all;
 }
 
 #menuToggle {
@@ -45,6 +47,7 @@ header {
     z-index: 1;
     -webkit-user-select: none;
     user-select: none;
+    pointer-events: all;
 }
 
 #menuToggle a {
@@ -111,7 +114,7 @@ header {
 
 #menu {
     position: absolute;
-    width: 180px;
+    width: 250px;
     margin: -120px 0 0 -50px;
     padding: 50px;
     padding-top: 125px;
@@ -122,16 +125,30 @@ header {
     transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
     max-height: 0;
     overflow: hidden;
+    
+    
 }
 
 #menuToggle input:checked ~ #menu {
+    display: flex;
+    flex-direction: column;
     transform: none;
-    max-height: 1000px; /* Ajustez cette valeur selon vos besoins */
+    max-height: 180px; /* Ajustez cette valeur selon vos besoins */
 }
 
 #menu li {
     padding: 3px 0;
-    font-size: 13px;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+#menu li a {
+    pointer-events: all;
+
+}
+
+ul#menu.active {
+    pointer-events: none;
 }
 
 #menuToggle input:checked ~ ul {
@@ -140,6 +157,8 @@ header {
 
 .dropdown-menu {
     display: none;
+    position: none;
+    width: 180px;
     background-color: #f9f9f9;
     list-style: none;
     opacity: 0.9;
@@ -147,10 +166,26 @@ header {
     max-height: 90px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
+    pointer-events: all;
+}
+
+ul.dropdown-menu {
+    width: auto;
+    z-index: 1;
+    position: relative;
 }
 
 .dropdown:hover .dropdown-menu {
     display: block;
+    position: absolute;
+}
+
+header li {
+    max-width: min-content;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dropdown-menu li a {
@@ -158,6 +193,7 @@ header {
     padding: 4px 4px;
     text-decoration: none;
     display: block;
+    pointer-events: all;
 }
 
 
