@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (menuHeight > threshold) {
             iframeHeight = menuHeight;
         } else {
-            iframeHeight = headerHeight - 30px;
+            iframeHeight = headerHeight - 30;
         }
 
         window.parent.postMessage({ height: iframeHeight }, '*');
