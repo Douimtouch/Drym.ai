@@ -79,6 +79,7 @@ function handleTouchMove(event) {
         }
     }
 }
+
 let touchIndicatorInterval;
 
 function showTouchIndicator() {
@@ -96,8 +97,10 @@ function hideTouchIndicator() {
     }
 }
 
-
 function handleMouseUp() {
+    if (draggedPoint) {
+        canvas.releasePointerCapture(draggedPoint.pointerId);
+    }
     draggedPoint = null;
 }
 
@@ -293,6 +296,8 @@ function handleResize() {
     init();
 }
 
+let draggedPointId = null;
+
 function handlePointClick(event) {
     if (event.type === 'touchstart' && event.touches.length > 1) {
         // Ignorer le clic si plusieurs doigts sont sur l'écran
@@ -332,7 +337,7 @@ function handlePointClick(event) {
             const dy = point.y - y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= point.size + 20) { // Augmenter la zone cliquable (solution 2)
+            if (distance <= point.size + 20) {
                 pointClicked = true;
                 hideTouchIndicator();
                 if (selectedPoint === point) {
@@ -358,6 +363,9 @@ function handlePointClick(event) {
                     point.element.style.top = point.y + 'px';
                     point.element.style.transform = 'translate(-50%, -50%)';
                 }
+                if (event.type === 'touchstart') {
+                    event.target.setPointerCapture(event.touches[0].identifier);
+                }
                 return;
             }
         }
@@ -370,10 +378,11 @@ function handlePointClick(event) {
             if (!point.element) {
                 const dx = point.x - x;
                 const dy = point.y - y;
-                const distance = Math.sqrt(dx * dx + dy * dy); // Utiliser la distance euclidienne (solution 13)
+                const distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance <= point.size * 8.5) {
                     draggedPoint = point;
+                    draggedPointId = event.pointerId;
                     hideTouchIndicator();
                     return;
                 }
@@ -389,27 +398,23 @@ function handlePointClick(event) {
     }
 }
 
-
-
-
-
 checkMobileDevice();
 if (isMobile) {
-    showTouchIndicator();
+showTouchIndicator();
 }
 init();
 animate();
 
 window.addEventListener('resize', () => {
-    if (!isMobile) {
-        handleResize();
-    }
+if (!isMobile) {
+handleResize();
+}
 });
 
 window.addEventListener('orientationchange', () => {
-    if (isMobile) {
-        setTimeout(handleResize, 100);
-    }
+if (isMobile) {
+setTimeout(handleResize, 100);
+}
 });
 
 // Gestionnaire d'événements pour le clic de souris et le début du toucher
@@ -429,12 +434,20 @@ canvas.addEventListener('mousemove', handleMouseMove);
 
 // Gestionnaire d'événements pour les touches sur l'écran (appareils mobiles)
 canvas.addEventListener('touchmove', handleTouchMove);
-canvas.addEventListener('touchend', handleTouchEnd);
 
 // Gestionnaire d'événements pour le relâchement du clic de souris
 canvas.addEventListener('mouseup', handleMouseUp);
 
+canvas.addEventListener('pointerup', function(event) {
+if (event.pointerId === draggedPointId) {
+draggedPointId = null;
+draggedPoint = null;
+}
+});
+
 // Gestionnaire d'événements pour empêcher le zoom par défaut sur les appareils mobiles
 canvas.addEventListener('gesturestart', function(event) {
-    event.preventDefault();
+event.preventDefault();
 });
+
+
