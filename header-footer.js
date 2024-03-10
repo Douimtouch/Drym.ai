@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menuToggle');
     const menuItems = document.getElementById('menu');
     const dropdownItems = document.querySelectorAll('.dropdown');
+    const threshold = 150; // Seuil de taille en pixels
 
     function toggleMenu() {
         menuItems.classList.toggle('active');
@@ -19,10 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
             item.addEventListener('click', function(event) {
                 event.stopPropagation();
                 this.classList.toggle('active');
-                // Empêcher la mise à jour de la taille de l'iframe lors de la fermeture du sous-menu
-                if (!this.classList.contains('active')) {
-                    event.preventDefault();
-                }
+                adjustIframeHeight();
             });
         }
     });
@@ -41,13 +39,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function adjustIframeHeight() {
-        const isMenuOpen = menuItems.classList.contains('active');
-        if (isMenuOpen) {
-            const headerHeight = document.querySelector('header').offsetHeight;
-            const menuHeight = menuItems.offsetHeight;
-            const iframeHeight = menuHeight;
-            window.parent.postMessage({ height: iframeHeight }, '*');
+        const headerHeight = document.querySelector('header').offsetHeight;
+        const menuHeight = menuItems.offsetHeight;
+        let iframeHeight;
+
+        if (menuHeight > threshold) {
+            iframeHeight = menuHeight;
+        } else {
+            iframeHeight = headerHeight;
         }
+
+        window.parent.postMessage({ height: iframeHeight }, '*');
     }
 
     menuItems.addEventListener('transitionend', function() {
