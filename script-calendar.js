@@ -19,10 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         currentDate = new Date(this.value);
         updateCalendar();
         centerSelectedDay();
-        
     });
-
-
 
     closeButton.addEventListener('click', function() {
         formContainer.style.display = 'none';
@@ -34,25 +31,49 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    prevWeekButton.addEventListener('click', function() {
+        currentDate.setDate(currentDate.getDate() - 7);
+        selectedDateInput.value = currentDate.toISOString().split('T')[0];
+        updateCalendar();
+        centerSelectedDay();
+    });
+
+    nextWeekButton.addEventListener('click', function() {
+        currentDate.setDate(currentDate.getDate() + 7);
+        selectedDateInput.value = currentDate.toISOString().split('T')[0];
+        updateCalendar();
+        centerSelectedDay();
+    });
+
     function updateCalendar() {
         calendarContainer.innerHTML = '';
-    
+        
         const currentDay = currentDate.getDay();
         const weekStart = new Date(currentDate);
         weekStart.setDate(currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1));
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const prevWeekStart = new Date(weekStart);
+        prevWeekStart.setDate(weekStart.getDate() - 6);
+        
+        if (prevWeekStart < today) {
+            prevWeekButton.style.display = 'none';
+        } else {
+            prevWeekButton.style.display = 'inline';
+        }
     
+
         let daysDisplayed = 0;
-    
+
         for (let i = 0; i < 7; i++) {
             const date = new Date(weekStart);
             date.setDate(weekStart.getDate() + i);
-    
+
             // Vérifier si la date est antérieure à la date actuelle
             if (date < new Date().setHours(0, 0, 0, 0)) {
                 continue; // Passer à la prochaine itération de la boucle
             }
-    
-            daysDisplayed++;
 
             const day = document.createElement('div');
             day.classList.add('day');
@@ -68,6 +89,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const timeSlots = document.createElement('div');
             timeSlots.classList.add('time-slots');
+
+            let hasTimeSlots = false;
 
             for (let j = 7; j < 21; j++) {
                 for (let k = 0; k < 2; k++) {
@@ -93,35 +116,37 @@ document.addEventListener('DOMContentLoaded', function() {
                         timeSlot.dataset.time = time;
                         timeSlot.addEventListener('click', openForm);
                         timeSlots.appendChild(timeSlot);
+                        hasTimeSlots = true;
                     }
                 }
             }
 
-            calendarContainer.style.gridTemplateColumns = `repeat(${daysDisplayed}, 1fr)`;
-            timeSlotsContainer.appendChild(timeSlots);
-
-            day.appendChild(timeSlotsContainer);
-
-            calendarContainer.appendChild(day);
+            if (hasTimeSlots) {
+                daysDisplayed++;
+                timeSlotsContainer.appendChild(timeSlots);
+                day.appendChild(timeSlotsContainer);
+                calendarContainer.appendChild(day);
+            }
         }
-        
+
+        calendarContainer.style.gridTemplateColumns = `repeat(${daysDisplayed}, 1fr)`;
     }
 
     function openForm(event) {
         const selectedDate = event.target.dataset.date;
         const selectedTime = event.target.dataset.time;
-    
+
         // Vérifier si l'horaire sélectionné est déjà passé
         const selectedDateTime = new Date(selectedDate + 'T' + selectedTime);
         if (selectedDateTime < new Date()) {
             alert("Vous ne pouvez pas sélectionner un horaire déjà passé.");
             return;
         }
-    
+
         dateInput.value = selectedDate;
         updateTimeSlots(selectedDate);
         timeInput.value = selectedTime;
-    
+
         const phoneInput = document.getElementById('phone');
         phoneInput.addEventListener('input', function() {
             if (!validatePhoneNumber(phoneInput.value)) {
@@ -137,13 +162,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.value = this.value.slice(0, 10); // Limiter à 10 chiffres
             }
         });
-    
+
         phoneInput.addEventListener('keypress', function(event) {
             if (event.keyCode < 48 || event.keyCode > 57) {
                 event.preventDefault(); // Empêcher la saisie de caractères non numériques
             }
         });
-    
+
         formContainer.style.display = 'block';
     }
 
@@ -210,15 +235,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 behavior: 'smooth',
                 inline: 'center',
                 block: 'end'
-                
             });
         }
     }
-    
+
     updateCalendar();
     centerSelectedDay();
-
-
 });
 
 document.addEventListener('DOMContentLoaded', function() {

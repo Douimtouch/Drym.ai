@@ -11,7 +11,7 @@ iframe, header iframe {
     display: flex;
     max-height: 350px;
     min-height: 150px;
-    height: 150px;
+    height: auto;
     position: relative;
     transition: height 0.3s ease;
 }
@@ -131,17 +131,27 @@ h1 {
     margin-bottom: 20px;
 }
 
+#prev-week {
+    display: none;
+    margin-right: 15px;
+    
+}
+
+#next-week {
+    margin-left: 15px;
+}
+
 .control-btn {
     background: none;
     border: none;
     font-size: 24px;
-    color: #87bae7;
+    color: #add9ff;
     cursor: pointer;
     transition: color 0.3s ease;
 }
 
 .control-btn:hover {
-    color: #0056b3;
+    color: #2b70b9;
 }
 
 .control-input {
@@ -304,7 +314,7 @@ input, textarea {
 
     .calendar-controls {
         flex-wrap: wrap;
-        justify-content: space-between;
+        justify-content: center;
         margin-bottom: 10px;
     }
 
