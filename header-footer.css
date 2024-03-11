@@ -136,11 +136,6 @@ header {
     max-height: 180px; /* Ajustez cette valeur selon vos besoins */
 }
 
-#menuToggle input:not(:checked) ~ #menu {
-    max-height: 0;
-    transition: max-height 0.5s cubic-bezier(0.77, 0.2, 0.05, 1.0);
-}
-
 #menu li {
     padding: 3px 0;
     font-size: 16;
@@ -176,6 +171,7 @@ ul#menu.active {
 
 ul.dropdown-menu {
     width: auto;
+    padding-right: 10px;
     z-index: 1;
     position: relative;
 }
