@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuItems = document.getElementById('menu');
     const dropdownItems = document.querySelectorAll('.dropdown');
     const threshold = 120; // Seuil de taille en pixels
+    const initialIframeHeight = 63; // Ajustez cette valeur selon votre besoin
 
     function toggleMenu() {
         menuItems.classList.toggle('active');
@@ -43,10 +44,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const menuHeight = menuItems.offsetHeight;
         let iframeHeight;
 
-        if (menuHeight > threshold) {
-            iframeHeight = menuHeight;
+        if (menuItems.classList.contains('active')) {
+            if (menuHeight > threshold) {
+                iframeHeight = menuHeight;
+            } else {
+                iframeHeight = headerHeight;
+            }
         } else {
-            iframeHeight = headerHeight;
+            iframeHeight = initialIframeHeight;
         }
 
         window.parent.postMessage({ height: iframeHeight }, '*');
