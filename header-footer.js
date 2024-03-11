@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menuToggle');
     const menuItems = document.getElementById('menu');
     const dropdownItems = document.querySelectorAll('.dropdown');
-    const threshold = 120; // Seuil de taille en pixels
-    const initialIframeHeight = 63; // Ajustez cette valeur selon votre besoin
+    const threshold = 180; // Seuil de taille en pixels
 
     function toggleMenu() {
         menuItems.classList.toggle('active');
@@ -44,14 +43,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const menuHeight = menuItems.offsetHeight;
         let iframeHeight;
 
-        if (menuItems.classList.contains('active')) {
-            if (menuHeight > threshold) {
-                iframeHeight = menuHeight;
-            } else {
-                iframeHeight = headerHeight;
-            }
+        if (menuHeight > threshold) {
+            iframeHeight = menuHeight;
         } else {
-            iframeHeight = initialIframeHeight;
+            iframeHeight = 63;
         }
 
         window.parent.postMessage({ height: iframeHeight }, '*');
@@ -70,4 +65,4 @@ document.addEventListener('DOMContentLoaded', function() {
             adjustIframeHeight();
         }
     });
-});
+}); 
