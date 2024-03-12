@@ -175,6 +175,7 @@ h1 {
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     max-height: 80vh;
+    min-width: 130px;
     overflow-y: auto;
     scrollbar-width: none; /* Masque la scrollbar pour Firefox */
     -ms-overflow-style: none; /* Masque la scrollbar pour IE et Edge */
@@ -295,6 +296,16 @@ input, textarea {
     }
 }
 
+@media screen and (max-width: 950px) {
+
+    .day {
+        min-width: 100px;
+        max-width: 140px;
+        width: auto;
+    }
+
+}
+
 @media screen and (max-width: 768px) {
 
     iframe, header iframe {
@@ -403,3 +414,4 @@ scrollbar-button {
     -moz-appearance: none;
     appearance: none;
 }
+
