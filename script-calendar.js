@@ -135,15 +135,22 @@ document.addEventListener('DOMContentLoaded', function() {
     function openForm(event) {
         const selectedDate = event.target.dataset.date;
         const selectedTime = event.target.dataset.time;
-
+    
         // Vérifier si l'horaire sélectionné est déjà passé
         const selectedDateTime = new Date(selectedDate + 'T' + selectedTime);
         if (selectedDateTime < new Date()) {
             alert("Vous ne pouvez pas sélectionner un horaire déjà passé.");
             return;
         }
-
-        dateInput.value = selectedDate;
+    
+        // Convertir la date sélectionnée en objet Date
+        const formattedDate = new Date(selectedDate);
+        // Ajouter un jour à la date sélectionnée
+        formattedDate.setDate(formattedDate.getDate() + 1);
+        // Formater la date au format 'YYYY-MM-DD'
+        const formattedDateString = formattedDate.toISOString().split('T')[0];
+    
+        dateInput.value = formattedDateString;
         updateTimeSlots(selectedDate);
         timeInput.value = selectedTime;
 
