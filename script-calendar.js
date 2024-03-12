@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Convertir la date sélectionnée en objet Date
         const formattedDate = new Date(selectedDate);
         // Ajouter un jour à la date sélectionnée
-        formattedDate.setDate(formattedDate.getDate() + 1);
+        formattedDate.setDate(formattedDate.getDate());
         // Formater la date au format 'YYYY-MM-DD'
         const formattedDateString = formattedDate.toISOString().split('T')[0];
     
