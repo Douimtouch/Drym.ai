@@ -262,10 +262,16 @@ function draw() {
 
     sortedPoints.forEach(point => {
         if (point !== selectedPoint) {
-            const dx = point.x - cursorPosition.x;
-            const dy = point.y - cursorPosition.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            const size = distance < 50 ? point.size * 1.5 : point.size;
+            let size = point.size;
+
+            // Vérifier si l'appareil est tactile avant d'appliquer l'effet de survol
+            if (!isMobile) {
+                const dx = point.x - cursorPosition.x;
+                const dy = point.y - cursorPosition.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                size = distance < 50 ? point.size * 1.5 : point.size;
+            }
+
             ctx.fillStyle = point.color;
             ctx.beginPath();
             ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
