@@ -99,7 +99,7 @@ function hideTouchIndicator() {
 
 function handleMouseUp(event) {
     if (draggedPoint) {
-        canvas.releasePointerCapture(event.pointerId); // Modifiez cette ligne
+        canvas.releasePointerCapture(event.pointerId);
         draggedPoint = null;
     }
 }
@@ -315,7 +315,7 @@ function handleResize() {
 let draggedPointId = null;
 
 function handlePointClick(event) {
-    if (event.type === 'touchstart' && event.touches.length > 1) {
+    if (event.type === 'touch' && event.touches.length > 1) {
         // Ignorer le clic si plusieurs doigts sont sur l'écran
         return;
     }
@@ -379,7 +379,7 @@ function handlePointClick(event) {
                     point.element.style.top = point.y + 'px';
                     point.element.style.transform = 'translate(-50%, -50%)';
                 }
-                if (event.type === 'touchstart') {
+                if (event.type === 'touch') {
                     event.target.setPointerCapture(event.touches[0].identifier);
                 }
                 return;
@@ -433,25 +433,14 @@ setTimeout(handleResize, 100);
 }
 });
 
-// Gestionnaire d'événements pour le clic de souris et le début du toucher
-canvas.addEventListener('mousedown', handlePointClick);
-canvas.addEventListener('touchstart', handlePointClick);
 
-// Gestionnaire d'événements pour le déplacement de la souris et le déplacement du doigt
-canvas.addEventListener('mousemove', handleMouseMove);
-canvas.addEventListener('touchmove', handleTouchMove);
+canvas.addEventListener('pointerdown', handlePointClick);
+canvas.addEventListener('pointermove', handleMouseMove);
+canvas.addEventListener('pointerup', handleMouseUp);
 
-// Gestionnaire d'événements pour le relâchement du clic de souris et la fin du toucher
-canvas.addEventListener('mouseup', handleMouseUp);
-canvas.addEventListener('touchend', handleMouseUp);
 
 // Gestionnaire d'événements pour les mouvements de la souris
 canvas.addEventListener('mousemove', handleMouseMove);
-
-// Gestionnaire d'événements pour les touches sur l'écran (appareils mobiles)
-canvas.addEventListener('touchmove', handleTouchMove);
-canvas.addEventListener('touchend', handleTouchEnd);
-
 // Gestionnaire d'événements pour le relâchement du clic de souris
 canvas.addEventListener('mouseup', handleMouseUp);
 
