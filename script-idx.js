@@ -359,7 +359,7 @@ function handlePointClick(event) {
             const dy = point.y - y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= point.size + 20) {
+            if (distance <= point.size + 60) {
                 pointClicked = true;
                 hideTouchIndicator();
                 if (selectedPoint === point) {
