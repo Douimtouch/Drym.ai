@@ -8,7 +8,7 @@ const minSize = 4;
 const maxSize = 14;
 const coloredPointSize = 22; // Taille des points de couleur
 const expandedPointSize = 100; // Taille des points cliqués
-const speed = 0.12;
+const speed = 0.135;
 const touchIndicator = document.getElementById('touchIndicator');
 
 let cursorPosition = { x: 0, y: 0 };
