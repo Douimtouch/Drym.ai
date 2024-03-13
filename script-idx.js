@@ -152,7 +152,7 @@ function hideAllElements() {
 
 function update() {
     const margin = maxSize + 5;
-    const coloredMargin = coloredPointSize + 20; // Marge plus grande pour les points de couleur
+    const coloredMargin = coloredPointSize + 40; // Marge plus grande pour les points de couleur
 
     points.forEach(point => {
         if (!point.expanded && point !== draggedPoint) {
