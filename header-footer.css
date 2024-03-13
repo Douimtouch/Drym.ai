@@ -241,16 +241,19 @@ footer {
 .footer-col h4 {
     color: #1e4fa8;
     margin-bottom: 10px;
+    font-size: 14px;
 }
 
 .footer-col ul {
     list-style-type: none;
     padding: 0;
+    font-size: 12px;
 }
 
 .footer-col ul li a {
     color: #333;
     text-decoration: none;
+
 }
 
 .footer-col ul li a:hover {
