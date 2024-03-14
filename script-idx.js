@@ -6,10 +6,9 @@ const elements = document.querySelectorAll('.element');
 const maxDistance = 270;
 const minSize = 4;
 const maxSize = 14;
-const coloredPointSize = 22; // Taille des points de couleur
-const expandedPointSize = 100; // Taille des points cliqués
-const speed = 0.135;
-const touchIndicator = document.getElementById('touchIndicator');
+const coloredPointSize = 22;
+const expandedPointSize = 100;
+const speed = 0.125;
 
 let cursorPosition = { x: 0, y: 0 };
 let isMobile = false;
@@ -38,78 +37,16 @@ function handleMouseMove(event) {
     }
 }
 
-function handleTouchStart(event) {
-    const rect = canvas.getBoundingClientRect();
-    touchStartPosition.x = event.touches[0].clientX - rect.left;
-    touchStartPosition.y = event.touches[0].clientY - rect.top;
-}
-
-function handleTouchMove(event) {
-    if (draggedPoint) {
-        event.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const x = event.touches[0].clientX - rect.left;
-        const y = event.touches[0].clientY - rect.top;
-        const margin = draggedPoint.color !== '#444444' ? coloredPointSize + 20 : maxSize + 5;
-        draggedPoint.x = Math.max(margin, Math.min(x, canvas.width - margin));
-        draggedPoint.y = Math.max(margin, Math.min(y, canvas.height - margin));
-    } else if (!selectedPoint && event.touches.length === 1) {
-        const rect = canvas.getBoundingClientRect();
-        const x = event.touches[0].clientX - rect.left;
-        const y = event.touches[0].clientY - rect.top;
-
-        // Vérifier si le doigt est au-dessus d'un point
-        let isOverPoint = false;
-        for (let i = 0; i < points.length; i++) {
-            const point = points[i];
-            const dx = point.x - x;
-            const dy = point.y - y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance <= point.size + 5.8) {
-                isOverPoint = true;
-                break;
-            }
-        }
-
-        if (isOverPoint) {
-            hideTouchIndicator();
-        } else {
-            showTouchIndicator();
-        }
-    }
-}
-
-let touchIndicatorInterval;
-
-function showTouchIndicator() {
-    if (isMobile) {
-        touchIndicatorInterval = setInterval(() => {
-            touchIndicator.style.display = touchIndicator.style.display === 'none' ? 'block' : 'none';
-        }, 35.5);
-    }
-}
-
-function hideTouchIndicator() {
-    if (isMobile) {
-        clearInterval(touchIndicatorInterval);
-        touchIndicator.style.display = 'none';
-    }
-}
-
 function handleMouseUp(event) {
     if (draggedPoint) {
         canvas.releasePointerCapture(event.pointerId);
         draggedPoint = null;
+        if (isMobile) {
+            document.body.style.overflow = 'auto';
+            document.body.style.touchAction = 'auto';
+        }
     }
 }
-
-canvas.addEventListener('pointerup', function(event) {
-    if (draggedPoint) {
-        canvas.releasePointerCapture(event.pointerId);
-        draggedPoint = null;
-    }
-});
 
 function init() {
     const container = canvas.parentElement;
@@ -152,7 +89,7 @@ function hideAllElements() {
 
 function update() {
     const margin = maxSize + 5;
-    const coloredMargin = coloredPointSize + 40; // Marge plus grande pour les points de couleur
+    const coloredMargin = coloredPointSize + 40;
 
     points.forEach(point => {
         if (!point.expanded && point !== draggedPoint) {
@@ -170,9 +107,7 @@ function update() {
                     point.x += repulsionX;
                     point.y += repulsionY;
 
-                    // Vérifier si le point est poussé hors du cadre
                     if (point.color !== '#444444') {
-                        // Utiliser la marge plus grande pour les points de couleur
                         if (point.x < coloredMargin) {
                             point.x = coloredMargin;
                         } else if (point.x > canvas.width - coloredMargin) {
@@ -185,7 +120,6 @@ function update() {
                             point.y = canvas.height - coloredMargin;
                         }
                     } else {
-                        // Utiliser la marge normale pour les points noirs
                         if (point.x < margin) {
                             point.x = margin;
                         } else if (point.x > canvas.width - margin) {
@@ -205,13 +139,10 @@ function update() {
             point.y += point.vy;
             point.z += point.vz;
 
-            // Vérifier si le point est un point de couleur ou un point noir
             if (point.color !== '#444444') {
-                // Utiliser la marge plus grande pour les points de couleur
                 if (point.x < coloredMargin || point.x > canvas.width - coloredMargin) point.vx *= -1;
                 if (point.y < coloredMargin || point.y > canvas.height - coloredMargin) point.vy *= -1;
             } else {
-                // Utiliser la marge normale pour les points noirs
                 if (point.x < margin || point.x > canvas.width - margin) point.vx *= -1;
                 if (point.y < margin || point.y > canvas.height - margin) point.vy *= -1;
             }
@@ -233,10 +164,6 @@ function update() {
             }
         }
     }
-}
-
-function easeInOutQuad(t) {
-    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 }
 
 function draw() {
@@ -264,7 +191,6 @@ function draw() {
         if (point !== selectedPoint) {
             let size = point.size;
 
-            // Vérifier si l'appareil est tactile avant d'appliquer l'effet de survol
             if (!isMobile) {
                 const dx = point.x - cursorPosition.x;
                 const dy = point.y - cursorPosition.y;
@@ -294,15 +220,6 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-function handleTouchEnd(event) {
-    if (draggedPoint) {
-        draggedPoint = null;
-    }
-    if (!selectedPoint && isMobile) {
-        showTouchIndicator();
-    }
-}
-
 function handleResize() {
     hideAllElements();
     const container = canvas.parentElement;
@@ -318,15 +235,10 @@ function handleResize() {
     init();
 }
 
-let draggedPointId = null;
-
 function handlePointClick(event) {
     if (event.type === 'touch' && event.touches.length > 1) {
-        // Ignorer le clic si plusieurs doigts sont sur l'écran
         return;
     }
-
-    event.preventDefault();
 
     const rect = canvas.getBoundingClientRect();
     const x = event.type === 'touchstart' ? event.touches[0].clientX - rect.left : event.clientX - rect.left;
@@ -334,7 +246,6 @@ function handlePointClick(event) {
 
     let pointClicked = false;
 
-    // Vérifier si le point sélectionné a été cliqué
     if (selectedPoint) {
         const dx = selectedPoint.x - x;
         const dy = selectedPoint.y - y;
@@ -343,15 +254,28 @@ function handlePointClick(event) {
         if (distance <= expandedPointSize) {
             selectedPoint.expanded = false;
             selectedPoint.element.style.display = 'none';
+            const previousSelectedPoint = selectedPoint;
             selectedPoint = null;
             if (isMobile) {
-                showTouchIndicator();
+                document.body.style.overflow = 'auto';
+                document.body.style.touchAction = 'auto';
             }
+            
+            // Vérifier si le même point a été cliqué à nouveau
+            if (previousSelectedPoint === getClickedPoint(x, y)) {
+                selectedPoint = previousSelectedPoint;
+                selectedPoint.expanded = true;
+                selectedPoint.element.style.display = 'block';
+                if (isMobile) {
+                    document.body.style.overflow = 'hidden';
+                    document.body.style.touchAction = 'none';
+                }
+            }
+            
             return;
         }
     }
 
-    // Parcourir d'abord les points de couleur
     for (let i = points.length - 1; i >= 0; i--) {
         const point = points[i];
         if (point.element) {
@@ -359,15 +283,27 @@ function handlePointClick(event) {
             const dy = point.y - y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance <= point.size + 60) {
+            if (distance <= point.size + 10) {
                 pointClicked = true;
-                hideTouchIndicator();
                 if (selectedPoint === point) {
-                    selectedPoint = null;
-                    point.expanded = false;
-                    point.element.style.display = 'none';
-                    if (isMobile) {
-                        showTouchIndicator();
+                    selectedPoint.expanded = !selectedPoint.expanded; // Inverser l'état d'expansion du point
+                    if (selectedPoint.expanded) {
+                        selectedPoint.element.style.display = 'block';
+                        selectedPoint.x = canvas.width / 2;
+                        selectedPoint.y = canvas.height / 2;
+                        selectedPoint.element.style.left = selectedPoint.x + 'px';
+                        selectedPoint.element.style.top = selectedPoint.y + 'px';
+                        selectedPoint.element.style.transform = 'translate(-50%, -50%)';
+                        if (isMobile) {
+                            document.body.style.overflow = 'hidden';
+                            document.body.style.touchAction = 'none';
+                        }
+                    } else {
+                        selectedPoint.element.style.display = 'none';
+                        if (isMobile) {
+                            document.body.style.overflow = 'auto';
+                            document.body.style.touchAction = 'auto';
+                        }
                     }
                 } else {
                     if (selectedPoint) {
@@ -375,25 +311,26 @@ function handlePointClick(event) {
                         selectedPoint.element.style.display = 'none';
                     }
                     selectedPoint = point;
-                    point.expanded = true;
-                    point.x = canvas.width / 2;
-                    point.y = canvas.height / 2;
-
-                    // Afficher le contenu HTML du point cliqué
-                    point.element.style.display = 'block';
-                    point.element.style.left = point.x + 'px';
-                    point.element.style.top = point.y + 'px';
-                    point.element.style.transform = 'translate(-50%, -50%)';
+                    selectedPoint.expanded = true;
+                    selectedPoint.x = canvas.width / 2;
+                    selectedPoint.y = canvas.height / 2;
+                    selectedPoint.element.style.display = 'block';
+                    selectedPoint.element.style.left = selectedPoint.x + 'px';
+                    selectedPoint.element.style.top = selectedPoint.y + 'px';
+                    selectedPoint.element.style.transform = 'translate(-50%, -50%)';
+                    if (isMobile) {
+                        document.body.style.overflow = 'hidden';
+                        document.body.style.touchAction = 'none';
+                    }
                 }
-                if (event.type === 'touch') {
-                    event.target.setPointerCapture(event.touches[0].identifier);
+                if (event.type === 'touchstart') {
+                    canvas.setPointerCapture(event.touches[0].identifier);
                 }
                 return;
             }
         }
     }
 
-    // Si aucun point de couleur n'a été cliqué, vérifier les points noirs
     if (!pointClicked) {
         for (let i = points.length - 1; i >= 0; i--) {
             const point = points[i];
@@ -404,8 +341,10 @@ function handlePointClick(event) {
 
                 if (distance <= point.size * 8.5) {
                     draggedPoint = point;
-                    canvas.setPointerCapture(event.pointerId); // Ajoutez cette ligne
-                    hideTouchIndicator();
+                    if (isMobile) {
+                        document.body.style.overflow = 'hidden';
+                        document.body.style.touchAction = 'none';
+                    }
                     return;
                 }
             }
@@ -414,52 +353,84 @@ function handlePointClick(event) {
 
     if (!pointClicked) {
         draggedPoint = null;
-        if (!selectedPoint && isMobile) {
-            showTouchIndicator();
+        if (isMobile) {
+            document.body.style.overflow = 'auto';
+            document.body.style.touchAction = 'auto';
         }
     }
 }
 
-checkMobileDevice();
-if (isMobile) {
-showTouchIndicator();
+function getClickedPoint(x, y) {
+    for (let i = points.length - 1; i >= 0; i--) {
+        const point = points[i];
+        if (point.element) {
+            const dx = point.x - x;
+            const dy = point.y - y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance <= point.size + 10) {
+                return point;
+            }
+        }
+    }
+    return null;
 }
+
+function handleTouchStart(event) {
+    event.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const x = event.touches[0].clientX - rect.left;
+    const y = event.touches[0].clientY - rect.top;
+    handlePointClick({ type: 'touchstart', touches: [{ clientX: event.touches[0].clientX, clientY: event.touches[0].clientY }] });
+}
+
+function handleTouchMove(event) {
+    if (draggedPoint) {
+        event.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const x = event.touches[0].clientX - rect.left;
+        const y = event.touches[0].clientY - rect.top;
+        const margin = draggedPoint.color !== '#444444' ? coloredPointSize + 20 : maxSize + 5;
+        draggedPoint.x = Math.max(margin, Math.min(x, canvas.width - margin));
+        draggedPoint.y = Math.max(margin, Math.min(y, canvas.height - margin));
+    }
+}
+
+function handleTouchEnd(event) {
+    if (draggedPoint) {
+        draggedPoint = null;
+        document.body.style.overflow = 'auto';
+        document.body.style.touchAction = 'auto';
+    }
+}
+
+checkMobileDevice();
 init();
 animate();
 
 window.addEventListener('resize', () => {
-if (!isMobile) {
-handleResize();
-}
+    if (!isMobile) {
+        handleResize();
+    }
 });
 
 window.addEventListener('orientationchange', () => {
-if (isMobile) {
-setTimeout(handleResize, 100);
-}
+    if (isMobile) {
+        setTimeout(handleResize, 100);
+    }
 });
-
 
 canvas.addEventListener('pointerdown', handlePointClick);
 canvas.addEventListener('pointermove', handleMouseMove);
 canvas.addEventListener('pointerup', handleMouseUp);
 
-
-// Gestionnaire d'événements pour les mouvements de la souris
 canvas.addEventListener('mousemove', handleMouseMove);
-// Gestionnaire d'événements pour le relâchement du clic de souris
 canvas.addEventListener('mouseup', handleMouseUp);
 
-canvas.addEventListener('pointerup', function(event) {
-if (event.pointerId === draggedPointId) {
-draggedPointId = null;
-draggedPoint = null;
-}
-});
+canvas.addEventListener('touchstart', handleTouchStart);
+canvas.addEventListener('touchmove', handleTouchMove);
+canvas.addEventListener('touchend', handleTouchEnd);
 
-// Gestionnaire d'événements pour empêcher le zoom par défaut sur les appareils mobiles
 canvas.addEventListener('gesturestart', function(event) {
-event.preventDefault();
+    event.preventDefault();
 });
-
-
