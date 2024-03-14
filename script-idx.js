@@ -359,9 +359,7 @@ init();
 animate();
 
 window.addEventListener('resize', () => {
-    if (!isMobile) {
         handleResize();
-    }
 });
 
 window.addEventListener('orientationchange', () => {
