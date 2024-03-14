@@ -98,7 +98,7 @@ function update() {
                 const dy = point.y - selectedPoint.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                if (distance < expandedPointSize * 2) {
+                if (distance < expandedPointSize * 1.75) {
                     const angle = Math.atan2(dy, dx);
                     const repulsionForce = (expandedPointSize * 2 - distance) / (expandedPointSize * 2);
                     const repulsionX = Math.cos(angle) * repulsionForce * 2;
