@@ -240,6 +240,8 @@ function handlePointClick(event) {
         return;
     }
 
+    event.preventDefault();
+
     const rect = canvas.getBoundingClientRect();
     const x = event.type === 'touchstart' ? event.touches[0].clientX - rect.left : event.clientX - rect.left;
     const y = event.type === 'touchstart' ? event.touches[0].clientY - rect.top : event.clientY - rect.top;
@@ -254,24 +256,7 @@ function handlePointClick(event) {
         if (distance <= expandedPointSize) {
             selectedPoint.expanded = false;
             selectedPoint.element.style.display = 'none';
-            const previousSelectedPoint = selectedPoint;
             selectedPoint = null;
-            if (isMobile) {
-                document.body.style.overflow = 'auto';
-                document.body.style.touchAction = 'auto';
-            }
-            
-            // Vérifier si le même point a été cliqué à nouveau
-            if (previousSelectedPoint === getClickedPoint(x, y)) {
-                selectedPoint = previousSelectedPoint;
-                selectedPoint.expanded = true;
-                selectedPoint.element.style.display = 'block';
-                if (isMobile) {
-                    document.body.style.overflow = 'hidden';
-                    document.body.style.touchAction = 'none';
-                }
-            }
-            
             return;
         }
     }
@@ -286,45 +271,26 @@ function handlePointClick(event) {
             if (distance <= point.size + 10) {
                 pointClicked = true;
                 if (selectedPoint === point) {
-                    selectedPoint.expanded = !selectedPoint.expanded; // Inverser l'état d'expansion du point
-                    if (selectedPoint.expanded) {
-                        selectedPoint.element.style.display = 'block';
-                        selectedPoint.x = canvas.width / 2;
-                        selectedPoint.y = canvas.height / 2;
-                        selectedPoint.element.style.left = selectedPoint.x + 'px';
-                        selectedPoint.element.style.top = selectedPoint.y + 'px';
-                        selectedPoint.element.style.transform = 'translate(-50%, -50%)';
-                        if (isMobile) {
-                            document.body.style.overflow = 'hidden';
-                            document.body.style.touchAction = 'none';
-                        }
-                    } else {
-                        selectedPoint.element.style.display = 'none';
-                        if (isMobile) {
-                            document.body.style.overflow = 'auto';
-                            document.body.style.touchAction = 'auto';
-                        }
-                    }
+                    selectedPoint = null;
+                    point.expanded = false;
+                    point.element.style.display = 'none';
                 } else {
                     if (selectedPoint) {
                         selectedPoint.expanded = false;
                         selectedPoint.element.style.display = 'none';
                     }
                     selectedPoint = point;
-                    selectedPoint.expanded = true;
-                    selectedPoint.x = canvas.width / 2;
-                    selectedPoint.y = canvas.height / 2;
-                    selectedPoint.element.style.display = 'block';
-                    selectedPoint.element.style.left = selectedPoint.x + 'px';
-                    selectedPoint.element.style.top = selectedPoint.y + 'px';
-                    selectedPoint.element.style.transform = 'translate(-50%, -50%)';
-                    if (isMobile) {
-                        document.body.style.overflow = 'hidden';
-                        document.body.style.touchAction = 'none';
-                    }
+                    point.expanded = true;
+                    point.x = canvas.width / 2;
+                    point.y = canvas.height / 2;
+
+                    point.element.style.display = 'block';
+                    point.element.style.left = point.x + 'px';
+                    point.element.style.top = point.y + 'px';
+                    point.element.style.transform = 'translate(-50%, -50%)';
                 }
-                if (event.type === 'touchstart') {
-                    canvas.setPointerCapture(event.touches[0].identifier);
+                if (event.type === 'touch') {
+                    event.target.setPointerCapture(event.touches[0].identifier);
                 }
                 return;
             }
@@ -344,6 +310,7 @@ function handlePointClick(event) {
                     if (isMobile) {
                         document.body.style.overflow = 'hidden';
                         document.body.style.touchAction = 'none';
+                        event.preventDefault();
                     }
                     return;
                 }
@@ -360,24 +327,7 @@ function handlePointClick(event) {
     }
 }
 
-function getClickedPoint(x, y) {
-    for (let i = points.length - 1; i >= 0; i--) {
-        const point = points[i];
-        if (point.element) {
-            const dx = point.x - x;
-            const dy = point.y - y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance <= point.size + 10) {
-                return point;
-            }
-        }
-    }
-    return null;
-}
-
 function handleTouchStart(event) {
-    event.preventDefault();
     const rect = canvas.getBoundingClientRect();
     const x = event.touches[0].clientX - rect.left;
     const y = event.touches[0].clientY - rect.top;
