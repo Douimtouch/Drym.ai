@@ -10,8 +10,6 @@ const coloredPointSize = 22;
 const expandedPointSize = 100;
 const speed = 0.125;
 
-
-
 let cursorPosition = { x: 0, y: 0 };
 let isMobile = false;
 let selectedPoint = null;
@@ -92,19 +90,10 @@ function handleMouseUp(event) {
     }
 }
 
-function setCanvasResolution(canvas) {
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
-}
-
 function init() {
     const container = canvas.parentElement;
-    canvas.style.width = container.clientWidth + 'px';
-    canvas.style.height = container.clientHeight + 'px';
-    setCanvasResolution(canvas);
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
 
     const numPointsPerWidth = canvas.width / 30;
     const numPoints = Math.max(elements.length, Math.floor(numPointsPerWidth));
@@ -276,9 +265,8 @@ function animate() {
 function handleResize() {
     hideAllElements();
     const container = canvas.parentElement;
-    canvas.style.width = container.clientWidth + 'px';
-    canvas.style.height = container.clientHeight + 'px';
-    setCanvasResolution(canvas);
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
 
     if (selectedPoint) {
         selectedPoint.expanded = false;
