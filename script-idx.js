@@ -9,6 +9,7 @@ const maxSize = 14;
 const coloredPointSize = 22;
 const expandedPointSize = 100;
 const speed = 0.125;
+const pixelRatio = window.devicePixelRatio || 1;
 
 let cursorPosition = { x: 0, y: 0 };
 let isMobile = false;
@@ -92,8 +93,11 @@ function handleMouseUp(event) {
 
 function init() {
     const container = canvas.parentElement;
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
+    canvas.width = container.clientWidth * pixelRatio;
+    canvas.height = container.clientHeight * pixelRatio;
+    canvas.style.width = container.clientWidth + 'px';
+    canvas.style.height = container.clientHeight + 'px';
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
     const numPointsPerWidth = canvas.width / 30;
     const numPoints = Math.max(elements.length, Math.floor(numPointsPerWidth));
@@ -265,8 +269,11 @@ function animate() {
 function handleResize() {
     hideAllElements();
     const container = canvas.parentElement;
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
+    canvas.width = container.clientWidth * pixelRatio;
+    canvas.height = container.clientHeight * pixelRatio;
+    canvas.style.width = container.clientWidth + 'px';
+    canvas.style.height = container.clientHeight + 'px';
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
     if (selectedPoint) {
         selectedPoint.expanded = false;
