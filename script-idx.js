@@ -97,9 +97,6 @@ function init() {
     canvas.width = container.clientWidth;
     canvas.height = container.clientHeight;
 
-    const pixelRatio = window.devicePixelRatio || 1;
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-
     const numPointsPerWidth = canvas.width / 30;
     const numPoints = Math.max(elements.length, Math.floor(numPointsPerWidth));
 
@@ -272,9 +269,6 @@ function handleResize() {
     const container = canvas.parentElement;
     canvas.width = container.clientWidth;
     canvas.height = container.clientHeight;
-
-    const pixelRatio = window.devicePixelRatio || 1;
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
     if (selectedPoint) {
         selectedPoint.expanded = false;
