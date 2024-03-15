@@ -232,7 +232,7 @@ h1 {
 
 .day-name {
     text-align: center;
-    font-weight: 600;
+    font-weight: normal;
     font-size: 14px;
     margin-bottom: 17px;
     color: #000000;
@@ -252,6 +252,7 @@ h1 {
 }
 
 .time-slot {
+    font-size: 12px;
     background-color: #f2f9ff;
     padding: 5px;
     margin-bottom: 5px;
@@ -341,14 +342,14 @@ input, textarea {
     }
 }
 
-@media screen and (max-width: 950px) {
+@media screen and (max-width: 1315px) {
 
     .day {
         display: block; /* Si nécessaire, mais c'est le comportement par défaut pour des éléments comme <div> */
+        min-width: 100px;
     }
     
     .day-name {
-        min-width: 100px;
         max-width: 120px;
         width: auto;
         margin: 0 auto;
