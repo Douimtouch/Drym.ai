@@ -345,7 +345,6 @@ input, textarea {
 
     .day {
         display: block; /* Si nécessaire, mais c'est le comportement par défaut pour des éléments comme <div> */
-        text-align: center; /* Pour le contenu inline ou inline-block à l'intérieur */
     }
     
     .day-name {
