@@ -1,5 +1,9 @@
 const canvas = document.getElementById('backgroundCanvas');
 const ctx = canvas.getContext('2d');
+
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = 'high';
+
 const points = [];
 const lines = [];
 const elements = document.querySelectorAll('.element');
@@ -217,6 +221,7 @@ function draw() {
         gradient.addColorStop(0, line[0].color);
         gradient.addColorStop(1, line[1].color);
         ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1; // Ajustez l'épaisseur de la ligne selon vos préférences
         ctx.beginPath();
         ctx.moveTo(line[0].x, line[0].y);
         ctx.lineTo(line[1].x, line[1].y);
@@ -242,7 +247,7 @@ function draw() {
 
             ctx.fillStyle = point.color;
             ctx.beginPath();
-            ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+            ctx.ellipse(point.x, point.y, size, size, 0, 0, Math.PI * 2);
             ctx.fill();
         }
     });
@@ -251,7 +256,7 @@ function draw() {
         const size = expandedPointSize;
         ctx.fillStyle = selectedPoint.color;
         ctx.beginPath();
-        ctx.arc(selectedPoint.x, selectedPoint.y, size, 0, Math.PI * 2);
+        ctx.ellipse(selectedPoint.x, selectedPoint.y, size, size, 0, 0, Math.PI * 2);
         ctx.fill();
     }
 }
