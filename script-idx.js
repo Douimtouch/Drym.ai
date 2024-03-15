@@ -25,6 +25,48 @@ function isMobileDevice() {
     return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
 }
 
+function hexToRgb(hex) {
+    var r = 0, g = 0, b = 0;
+    hex = hex.substring(1);
+    r = parseInt(hex.substring(0, 2), 16);
+    g = parseInt(hex.substring(2, 4), 16);
+    b = parseInt(hex.substring(4, 6), 16);
+    return {r: r, g: g, b: b};
+}
+
+document.querySelectorAll('.element').forEach(function(el) {
+    var bgColor = el.getAttribute('data-color');
+    var rgb = hexToRgb(bgColor);
+
+    // Calcul une couleur plus sombre pour le texte
+    var darkerColor = `rgb(${rgb.r * 0.45}, ${rgb.g * 0.45}, ${rgb.b * 0.45})`;
+    el.style.color = darkerColor;
+  
+    // Ajuste la couleur pour le survol (moins claire que précédemment)
+    var hoverColor = `rgb(${Math.min(rgb.r * 0.65, 255)}, ${Math.min(rgb.g * 0.65, 255)}, ${Math.min(rgb.b * 0.65, 255)})`;
+
+    el.querySelectorAll('a').forEach(function(a) {
+        a.style.color = darkerColor;
+        var span = document.createElement('span');
+        span.className = 'link-circle';
+        a.appendChild(span);
+        a.dataset.hoverColor = hoverColor;
+    });
+});
+
+document.querySelectorAll('.element a').forEach(function(a) {
+    a.addEventListener('mouseenter', function() {
+        this.style.color = this.dataset.hoverColor;
+    });
+    a.addEventListener('mouseleave', function() {
+        var parentColor = this.closest('.element').style.color;
+        this.style.color = parentColor; // Réapplique la couleur d'origine
+    });
+});
+
+
+
+
 function handleMouseMove(event) {
     const rect = canvas.getBoundingClientRect();
     cursorPosition.x = event.clientX - rect.left;
