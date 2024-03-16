@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>On vous rappelle ? </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="assets.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    
+</head>
+<body class="fade-in">
+    <header id="header">
+        <iframe src="header.html" frameborder="0" scrolling="no" allow-scripts></iframe>
+    </header>
+
+
+
+    <main>
+
+    <div class="container">
+
+
+
+
+
+
+        
+        <div class="text-content">
+
+            <h2 data-speed="0.05">Notre approche</h2> 
+            <p><div class="sphere-text">Notre approche lllll lllll llllllllllll  llllll  lllll  llllll lllll  llllll  lll  llllll  lllllllllllllllllllll  llllll  llllllllllllllllllllllllllll llllll llllllllllllllll llllll lllllllllllllllllllllll llllll llllllllllllllllllll llllll lllllllll</div></p>
+
+        </div>
+
+        <h2>Nos solutions et services</br></h2>
+
+        <div class="saut"></div>
+
+
+    </div>
+    </main>
+
+
+
+    <footer id="footer">
+        <iframe src="footer.html" frameborder="0" scrolling="no"></iframe>
+    </footer>
+    
+    <script>
+        // Écouter les messages de l'iframe
+        window.addEventListener('message', function(event) {
+            if (event.data.height) {
+                document.querySelector('header iframe').style.height = event.data.height + 'px';
+            }
+        }, false);
+    </script>
+
+</body>
+</html>
