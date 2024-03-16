@@ -117,13 +117,17 @@
 
     .sphere-text {
         margin-left: 60px;
-        margin-top: 0px;
+        margin-top: -20px;
         font-size: 21px;
         width: 290px;
     }
 
+    .text-content h2 {
+        top: calc(38% - 220px); 
+    }
+
     .text-content p {
-        top: 49%;
+        top: 47%;
         left: 52%;
     }
 
@@ -136,18 +140,22 @@
     }
 
     .text-content {
-        min-height: 870px;
+        min-height: 700px;
+    }
+
+    .text-content h2 {
+        top: calc(35% - 220px); 
     }
 
     .sphere-text {
         margin-left: 100px;
-        margin-top: 70px;
+        margin-top: -50px;
         font-size: 22px;
         width: 350px;
     }
 
     .text-content p {
-        top: 53%;
+        top: 48%;
         left: 54%;
     }
 }
