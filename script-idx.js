@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d');
 
 ctx.imageSmoothingEnabled = true;
 ctx.imageSmoothingQuality = 'high';
+ctx.filter = 'blur(1px)'
 
 const points = [];
 const lines = [];
@@ -47,7 +48,7 @@ document.querySelectorAll('.element').forEach(function(el) {
     el.style.color = darkerColor;
   
     // Ajuste la couleur pour le survol (moins claire que précédemment)
-    var hoverColor = `rgb(${Math.min(rgb.r * 0.65, 255)}, ${Math.min(rgb.g * 0.65, 255)}, ${Math.min(rgb.b * 0.65, 255)})`;
+    var hoverColor = `rgb(${Math.min(rgb.r * 0.75, 255)}, ${Math.min(rgb.g * 0.75, 255)}, ${Math.min(rgb.b * 0.75, 255)})`;
 
     el.querySelectorAll('a').forEach(function(a) {
         a.style.color = darkerColor;
@@ -270,8 +271,12 @@ function animate() {
 function handleResize() {
     hideAllElements();
     const container = canvas.parentElement;
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
+    const rect = container.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
     if (selectedPoint) {
         selectedPoint.expanded = false;
