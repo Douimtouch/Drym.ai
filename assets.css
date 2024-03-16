@@ -6,7 +6,7 @@
     justify-content: center; /* Centrage horizontal */
     align-items: center; /* Centrage vertical */
     max-width: 1100px;
-    min-width: 500px;
+    min-width: auto;
     width: 100%; /* Assure que la div prend la largeur disponible */
     height: 100vh; /* Hauteur automatique */
     height: 500px; /* Hauteur minimale */
