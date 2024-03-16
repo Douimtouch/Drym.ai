@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     updateSvgSize();
 
+
+
     function createGradient(id, colorStart, colorEnd) {
         const defs = svg.querySelector('defs') || document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         svg.prepend(defs);
@@ -99,6 +101,8 @@ function getMainColor(element) {
     return '#000000'; // Couleur par défaut si aucune correspondance n'est trouvée
 }
 
+
+
     function drawRectangleBetweenElements(startElement, endElement, gradientId) {
         const startRect = startElement.getBoundingClientRect();
         const endRect = endElement.getBoundingClientRect();
@@ -136,4 +140,16 @@ function getMainColor(element) {
             animateLines();
         });
     }
-});
+    const toggleTextButton = document.getElementById('toggleText');
+    const servicesTextParagraph = document.querySelector('.services-text p');
+    
+    toggleTextButton.addEventListener('click', function() {
+        servicesTextParagraph.classList.toggle('expanded');
+        if (servicesTextParagraph.classList.contains('expanded')) {
+            toggleTextButton.textContent = 'Voir moins';
+        } else {
+            toggleTextButton.textContent = 'Voir plus';
+        }
+    });
+    });
+
