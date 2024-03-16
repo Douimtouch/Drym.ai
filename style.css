@@ -5,7 +5,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-
 }
 
 
@@ -133,6 +132,11 @@ body.fade-in {
     border-radius: 50%;
 }
 
+html {
+    width: 100%;
+    height: auto;
+}
+
 .point {
     cursor: pointer;
     transition: transform 0.3s ease;
@@ -147,6 +151,7 @@ body.fade-in {
     margin: 0 auto;
     padding: 20px;
     flex-grow: 1;
+    overflow-x: hidden;
 }
 
 h1 {
