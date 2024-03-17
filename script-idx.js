@@ -20,7 +20,11 @@ let isMobile = false;
 let selectedPoint = null;
 let draggedPoint = null;
 let touchStartPosition = { x: 0, y: 0 };
-
+let startTime = null;
+let lastAnimationTime = 0;
+const animationInterval = 6000; // Intervalle entre chaque animation (en millisecondes)
+const animationDuration = 1000;
+let animationActive = true;
 function checkMobileDevice() {
     isMobile = isMobileDevice();
 }
@@ -44,11 +48,11 @@ document.querySelectorAll('.element').forEach(function(el) {
     var rgb = hexToRgb(bgColor);
 
     // Calcul une couleur plus sombre pour le texte
-    var darkerColor = `rgb(${rgb.r * 0.45}, ${rgb.g * 0.45}, ${rgb.b * 0.45})`;
+    var darkerColor = `rgb(${Math.max(rgb.r - 110, 0)}, ${Math.max(rgb.g - 110, 0)}, ${Math.max(rgb.b - 110, 0)})`;
     el.style.color = darkerColor;
   
     // Ajuste la couleur pour le survol (moins claire que précédemment)
-    var hoverColor = `rgb(${Math.min(rgb.r * 0.75, 255)}, ${Math.min(rgb.g * 0.75, 255)}, ${Math.min(rgb.b * 0.75, 255)})`;
+    var hoverColor = `rgb(${Math.min(rgb.r - 50, 255)}, ${Math.min(rgb.g - 50, 255)}, ${Math.min(rgb.b - 50, 255)})`;
 
     el.querySelectorAll('a').forEach(function(a) {
         a.style.color = darkerColor;
@@ -213,7 +217,10 @@ function update() {
     }
 }
 
-function draw() {
+function draw(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+
     ctx.fillStyle = 'rgba(245, 245, 245, 5)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -237,21 +244,38 @@ function draw() {
 
     sortedPoints.forEach(point => {
         if (point !== selectedPoint) {
-            let size = point.size;
-
-            if (!isMobile) {
-                const dx = point.x - cursorPosition.x;
-                const dy = point.y - cursorPosition.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                size = distance < 50 ? point.size * 1.5 : point.size;
+          let size = point.size;
+      
+          if (!isMobile) {
+            const dx = point.x - cursorPosition.x;
+            const dy = point.y - cursorPosition.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            size = distance < 50 ? point.size * 1.5 : point.size;
+          }
+      
+          // Appliquer l'animation uniquement aux points colorés (non noirs)
+          if (point.element && animationActive) {
+            // Vérifier si l'animation doit être déclenchée
+            if (timestamp - lastAnimationTime > animationInterval) {
+              lastAnimationTime = timestamp;
             }
-
-            ctx.fillStyle = point.color;
-            ctx.beginPath();
-            ctx.ellipse(point.x, point.y, size, size, 0, 0, Math.PI * 2);
-            ctx.fill();
+      
+            // Calculer la progression de l'animation
+            const animationProgress = (timestamp - lastAnimationTime) / animationDuration;
+      
+            // Appliquer l'animation uniquement si elle est en cours
+            if (animationProgress < 1) {
+              const pulseFactor = 1 + Math.sin(animationProgress * Math.PI) * 0.85;
+              size *= pulseFactor;
+            }
+          }
+      
+          ctx.fillStyle = point.color;
+          ctx.beginPath();
+          ctx.ellipse(point.x, point.y, size, size, 0, 0, Math.PI * 2);
+          ctx.fill();
         }
-    });
+      });
 
     if (selectedPoint) {
         const size = expandedPointSize;
@@ -266,6 +290,7 @@ function animate() {
     update();
     draw();
     requestAnimationFrame(animate);
+    requestAnimationFrame(draw);
 }
 
 function handleResize() {
@@ -324,23 +349,24 @@ function handlePointClick(event) {
                 pointClicked = true;
                 if (selectedPoint === point) {
                     selectedPoint = null;
-                    point.expanded = false;
-                    point.element.style.display = 'none';
-                } else {
-                    if (selectedPoint) {
-                        selectedPoint.expanded = false;
-                        selectedPoint.element.style.display = 'none';
-                    }
-                    selectedPoint = point;
-                    point.expanded = true;
-                    point.x = canvas.width / 2;
-                    point.y = canvas.height / 2;
+          point.expanded = false;
+          point.element.style.display = 'none';
+        } else {
+          if (selectedPoint) {
+            selectedPoint.expanded = false;
+            selectedPoint.element.style.display = 'none';
+          }
+          selectedPoint = point;
+          point.expanded = true;
+          point.x = canvas.width / 2;
+          point.y = canvas.height / 2;
 
-                    point.element.style.display = 'block';
-                    point.element.style.left = point.x + 'px';
-                    point.element.style.top = point.y + 'px';
-                    point.element.style.transform = 'translate(-50%, -50%)';
-                }
+          point.element.style.display = 'block';
+          point.element.style.left = point.x + 'px';
+          point.element.style.top = point.y + 'px';
+          point.element.style.transform = 'translate(-50%, -50%)';
+          animationActive = false; // Désactiver l'animation lorsqu'un point est cliqué
+        }
                 if (event.type === 'touch') {
                     event.target.setPointerCapture(event.touches[0].identifier);
                 }
