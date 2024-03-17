@@ -205,7 +205,7 @@
     transform: translateZ(180px);
     box-shadow: 0 20px 30px rgba(214, 196, 255, 0.4), 0 30px 50px rgba(214, 196, 255, 0.3), 0 40px 70px rgba(214, 196, 255, 0.2), inset 0 -20px 30px rgba(255, 255, 255, 0.3);
     margin: 0 auto;
-    margin-bottom: 35px;
+    margin-bottom: 15px;
     z-index: 3;
     padding: 12px;
     transition: transform 0.3s ease;
@@ -226,14 +226,16 @@
     line-height: 1.8;
     color: #333;
     border-radius: 20px;
-    background-color: rgba(245, 245, 245, 0.35);
+    background-color: rgba(245, 245, 245, 0.5);
     backdrop-filter: blur(5px);
     padding: 20px;
     margin: 20px;
     max-height: 200px;
     overflow: hidden;
     position: relative;
-    transition: max-height 0.8s ease;
+    transition: max-height 0.405s ease;
+    z-index: 4000;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.035), 0 2px 4px rgba(0, 0, 0, 0.012);
 }
 
 .services-text p::after {
@@ -246,10 +248,12 @@
     background: linear-gradient(to bottom, rgba(245, 245, 245, 0), rgba(245, 245, 245, 0.8));
     pointer-events: none;
     transition: opacity 0.3s ease;
+
 }
 
 .services-text p.expanded {
     max-height: 3000px;
+    transition: max-height 0.575s ease;
 }
 
 .services-text p.expanded::after {
