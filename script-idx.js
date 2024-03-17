@@ -22,7 +22,7 @@ let draggedPoint = null;
 let touchStartPosition = { x: 0, y: 0 };
 let startTime = null;
 let lastAnimationTime = 0;
-const animationInterval = 6000; // Intervalle entre chaque animation (en millisecondes)
+const animationInterval = 4000; // Intervalle entre chaque animation (en millisecondes)
 const animationDuration = 1000;
 let animationActive = true;
 function checkMobileDevice() {
