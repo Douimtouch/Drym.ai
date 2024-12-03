@@ -25,6 +25,28 @@ let lastAnimationTime = 0;
 const animationInterval = 4000; // Intervalle entre chaque animation (en millisecondes)
 const animationDuration = 1000;
 let animationActive = true;
+
+const particleConfig = {
+    COUNT: 10,
+    INNER: 40,
+    OUTER: 50,
+    MIN_DIST: 45,
+    RINGS: 2,
+    DURATION: 3000,
+    INTERVAL: 6000,
+    COLOR: '#3b82f6',
+    CURSOR_SVG: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>`
+};
+
+let cursorImg;
+const loadCursor = () => {
+    return new Promise(resolve => {
+        cursorImg = new Image();
+        cursorImg.onload = () => resolve();
+        cursorImg.src = 'data:image/svg+xml,' + encodeURIComponent(particleConfig.CURSOR_SVG);
+    });
+};
+
 function checkMobileDevice() {
     isMobile = isMobileDevice();
 }
@@ -72,8 +94,6 @@ document.querySelectorAll('.element a').forEach(function(a) {
         this.style.color = parentColor; // Réapplique la couleur d'origine
     });
 });
-
-
 
 
 function handleMouseMove(event) {
@@ -217,19 +237,230 @@ function update() {
     }
 }
 
+async function initializeCanvas() {
+    checkMobileDevice();
+    await loadCursor(); // Attendre que l'image soit chargée
+    init();
+    animate();
+}
+
+function optimizedParticleGeneration(time, point) {
+    const particles = [];
+    const ringCount = particleConfig.RINGS;
+    const particlesPerRing = Math.ceil(particleConfig.COUNT / ringCount);
+    
+    for (let ring = 0; ring < ringCount; ring++) {
+        const radius = particleConfig.INNER + 
+            (particleConfig.OUTER - particleConfig.INNER) * (ring / (ringCount - 1));
+        
+        // Calculer le nombre de particules pour ce cercle
+        const angleStep = (2 * Math.PI) / particlesPerRing;
+        
+        for (let i = 0; i < particlesPerRing; i++) {
+            if (particles.length >= particleConfig.COUNT) break;
+            
+            const angle = i * angleStep + (ring * angleStep / 2);
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            
+            particles.push({
+                x: point.x + x,
+                y: point.y + y,
+                bx: x,
+                by: y,
+                fx: x * 0.5, // Force de dispersion proportionnelle à la position
+                fy: y * 0.5,
+                scale: 1,
+                opacity: 0.8,
+                time: time + (particles.length * 50), // Délai progressif
+                isCursor: Math.random() > 0.3,
+                color: point.color
+            });
+        }
+    }
+    
+    // Mélanger l'ordre d'apparition des particules
+    return particles
+        .map(value => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value);
+}
+
+class ParticleSystem {
+    constructor() {
+        this.particles = [];
+        this.cursorCache = new Map();
+        this.textCache = new Map();
+    }
+
+    generate(time, point) {
+        this.particles = optimizedParticleGeneration(time, point);
+    }
+
+    createPixelatedOutline(ctx, drawFunction, pixelSize = 2) {
+        // Créer un canvas temporaire avec une résolution plus basse
+        const tempCanvas = document.createElement('canvas');
+        const scale = 1 / pixelSize;
+        tempCanvas.width = ctx.canvas.width * scale;
+        tempCanvas.height = ctx.canvas.height * scale;
+        
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.scale(scale, scale);
+        
+        // Dessiner sur le canvas temporaire
+        drawFunction(tempCtx);
+        
+        // Redimensionner vers le canvas original avec pixelisation
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(
+            tempCanvas, 
+            0, 0, tempCanvas.width, tempCanvas.height,
+            0, 0, ctx.canvas.width, ctx.canvas.height
+        );
+        ctx.imageSmoothingEnabled = true;
+    }
+
+    getCursorCanvas(color) {
+        if (this.cursorCache.has(color)) {
+            return this.cursorCache.get(color);
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 24;
+        canvas.height = 24;
+        const ctx = canvas.getContext('2d');
+
+        // Fonction pour dessiner le contour pixelisé
+        const drawOutline = (targetCtx) => {
+            targetCtx.lineWidth = 0.8;
+            targetCtx.strokeStyle = 'rgba(0, 0, 0, 1)';
+            
+            targetCtx.beginPath();
+            targetCtx.moveTo(3, 3);
+            targetCtx.lineTo(10.07, 19.97);
+            targetCtx.lineTo(12.58, 12.58);
+            targetCtx.lineTo(19.97, 10.07);
+            targetCtx.closePath();
+            targetCtx.stroke();
+
+            targetCtx.beginPath();
+            targetCtx.moveTo(13, 13);
+            targetCtx.lineTo(19, 19);
+            targetCtx.stroke();
+        };
+
+        // Dessiner le contour pixelisé
+        this.createPixelatedOutline(ctx, drawOutline);
+
+        // Dessiner la forme colorée normalement
+        ctx.fillStyle = color;
+        ctx.strokeStyle = color;
+        
+        ctx.beginPath();
+        ctx.moveTo(3, 3);
+        ctx.lineTo(10.07, 19.97);
+        ctx.lineTo(12.58, 12.58);
+        ctx.lineTo(19.97, 10.07);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(13, 13);
+        ctx.lineTo(19, 19);
+        ctx.stroke();
+
+        this.cursorCache.set(color, canvas);
+        return canvas;
+    }
+
+    getTextCanvas(text, color) {
+        const key = `${text}-${color}`;
+        if (this.textCache.has(key)) {
+            return this.textCache.get(key);
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 60;
+        canvas.height = 30;
+        const ctx = canvas.getContext('2d');
+
+        // Fonction pour dessiner le contour du texte pixelisé
+        const drawOutline = (targetCtx) => {
+            targetCtx.font = "600 16px system-ui";
+            targetCtx.strokeStyle = 'rgba(0, 0, 0, 1)';
+            targetCtx.lineWidth = 0.8;
+            targetCtx.strokeText(text, 20, 15);
+        };
+
+        // Dessiner le contour pixelisé
+        this.createPixelatedOutline(ctx, drawOutline);
+
+        // Dessiner le texte coloré normalement
+        ctx.font = "600 16px system-ui";
+        ctx.fillStyle = color;
+        ctx.fillText(text, 20, 15);
+
+        this.textCache.set(key, canvas);
+        return canvas;
+    }
+
+    render(ctx, time, point) {
+        this.particles.forEach(p => {
+            const elapsed = time - p.time;
+            if(elapsed < 0 || elapsed > particleConfig.DURATION) return;
+
+            const progress = elapsed / particleConfig.DURATION;
+            let scale = 0, opacity = 0;
+            let x = point.x + p.bx;
+            let y = point.y + p.by;
+
+            if(progress < 0.1) {
+                const t = progress / 0.1;
+                scale = t;
+                opacity = t;
+            } else if(progress < 0.8) {
+                scale = 1;
+                opacity = 1;
+            } else {
+                const t = (progress - 0.8) / 0.2;
+                scale = 1 - t;
+                opacity = 1 - t;
+                x += p.fx * t;
+                y += p.fy * t;
+            }
+
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            ctx.globalAlpha = opacity;
+
+            if(p.isCursor) {
+                const cursorCanvas = this.getCursorCanvas(p.color);
+                ctx.drawImage(cursorCanvas, -10, -10, 20, 20);
+            } else {
+                const textCanvas = this.getTextCanvas('click', p.color);
+                ctx.drawImage(textCanvas, -20, -10);
+            }
+
+            ctx.restore();
+        });
+    }
+}
+
 function draw(timestamp) {
     if (!startTime) startTime = timestamp;
-    const elapsed = timestamp - startTime;
 
     ctx.fillStyle = 'rgba(245, 245, 245, 5)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // 1. Dessiner les lignes
     lines.forEach(line => {
         const gradient = ctx.createLinearGradient(line[0].x, line[0].y, line[1].x, line[1].y);
         gradient.addColorStop(0, line[0].color);
         gradient.addColorStop(1, line[1].color);
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = 1; // Ajustez l'épaisseur de la ligne selon vos préférences
+        ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(line[0].x, line[0].y);
         ctx.lineTo(line[1].x, line[1].y);
@@ -242,41 +473,53 @@ function draw(timestamp) {
         return 0;
     });
 
+    // 2. Dessiner les cercles
     sortedPoints.forEach(point => {
         if (point !== selectedPoint) {
-          let size = point.size;
-      
-          if (!isMobile) {
-            const dx = point.x - cursorPosition.x;
-            const dy = point.y - cursorPosition.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            size = distance < 50 ? point.size * 1.5 : point.size;
-          }
-      
-          // Appliquer l'animation uniquement aux points colorés (non noirs)
-          if (point.element && animationActive) {
-            // Vérifier si l'animation doit être déclenchée
-            if (timestamp - lastAnimationTime > animationInterval) {
-              lastAnimationTime = timestamp;
-            }
-      
-            // Calculer la progression de l'animation
-            const animationProgress = (timestamp - lastAnimationTime) / animationDuration;
-      
-            // Appliquer l'animation uniquement si elle est en cours
-            if (animationProgress < 1) {
-              const pulseFactor = 1 + Math.sin(animationProgress * Math.PI) * 0.85;
-              size *= pulseFactor;
-            }
-          }
-      
-          ctx.fillStyle = point.color;
-          ctx.beginPath();
-          ctx.ellipse(point.x, point.y, size, size, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
+            let size = point.size;
 
+            if (!isMobile) {
+                const dx = point.x - cursorPosition.x;
+                const dy = point.y - cursorPosition.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                size = distance < 50 ? point.size * 1.5 : point.size;
+            }
+
+            if (point.element && animationActive) {
+                const animationProgress = (timestamp - lastAnimationTime) / animationDuration;
+                if (animationProgress < 1) {
+                    const pulseFactor = 1 + Math.sin(animationProgress * Math.PI) * 0.85;
+                    size *= pulseFactor;
+                }
+            }
+
+            ctx.fillStyle = point.color;
+            ctx.beginPath();
+            ctx.ellipse(point.x, point.y, size, size, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    });
+
+    // 3. Dessiner les particules en dernier
+    sortedPoints.forEach(point => {
+        if (point !== selectedPoint && point.element && animationActive) {
+            if (!point.particleSystem) {
+                point.particleSystem = new ParticleSystem();
+                point.lastParticleAnim = 0;
+            }
+
+            if (timestamp - point.lastParticleAnim > particleConfig.INTERVAL) {
+                point.lastParticleAnim = timestamp;
+                point.particleSystem.generate(timestamp, point);
+            }
+
+            if (point.particleSystem) {
+                point.particleSystem.render(ctx, timestamp, point);
+            }
+        }
+    });
+
+    // 4. Dessiner le point sélectionné en tout dernier
     if (selectedPoint) {
         const size = expandedPointSize;
         ctx.fillStyle = selectedPoint.color;
@@ -286,11 +529,10 @@ function draw(timestamp) {
     }
 }
 
-function animate() {
+function animate(timestamp) {
     update();
-    draw();
+    draw(timestamp);
     requestAnimationFrame(animate);
-    requestAnimationFrame(draw);
 }
 
 function handleResize() {
@@ -432,9 +674,7 @@ function handleTouchEnd(event) {
     }
 }
 
-checkMobileDevice();
-init();
-animate();
+initializeCanvas();
 
 window.addEventListener('resize', () => {
     if (!isMobile) {    
