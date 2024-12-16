@@ -67,7 +67,14 @@
     <script>
         // Écouter les messages de l'iframe
         window.addEventListener('message', function(event) {
-            if (event.data.height) {
+            // Vérifier l'origine du message
+            if (event.origin !== window.location.origin) {
+                console.log('Message rejeté d\'une origine non autorisée:', event.origin);
+                return;
+            }
+        
+            // Vérifier que la donnée est du format attendu
+            if (event.data && typeof event.data.height === 'number') {
                 document.querySelector('header iframe').style.height = event.data.height + 'px';
             }
         }, false);

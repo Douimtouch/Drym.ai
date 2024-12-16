@@ -56,13 +56,19 @@ body.fade-in {
 
 .canvas-container {
     position: relative;
-    width: 100%;
-    min-height: 500px;
-    max-height: 500px;
-    overflow: auto;
+    width: 100vw; /* Utilise la largeur totale du viewport */
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    min-height: 800px;
+    max-height: 800px;
+    overflow: hidden; /* Change auto à hidden pour éviter les scrollbars */
     touch-action: auto;
-    scrollbar-width: thin; /* Masque la scrollbar pour Firefox */
-    -ms-overflow-style: thin; /* Masque la scrollbar pour IE et Edge */
+    scrollbar-width: thin;
+    -ms-overflow-style: thin;
+    transform: translateY(-50px);
+    z-index: 0;
 }
 
 #backgroundCanvas {

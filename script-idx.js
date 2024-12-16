@@ -1,5 +1,6 @@
+
 const canvas = document.getElementById('backgroundCanvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d', {alpha: true}); 
 
 ctx.imageSmoothingEnabled = true;
 ctx.imageSmoothingQuality = 'high';
@@ -37,6 +38,10 @@ const particleConfig = {
     COLOR: '#3b82f6',
     CURSOR_SVG: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg>`
 };
+
+const verticalMargin = 150; // Ajustez selon vos besoins
+const verticalColoredMargin = verticalMargin + 15; // Un peu plus grand pour les points colorés
+
 
 let cursorImg;
 const loadCursor = () => {
@@ -137,9 +142,10 @@ function init() {
 
 function createPoint(color, size, element) {
     const margin = maxSize + 5;
+    const vMargin = element ? verticalColoredMargin : verticalMargin;
     return {
         x: Math.random() * (canvas.width - margin * 2) + margin,
-        y: Math.random() * (canvas.height - margin * 2) + margin,
+        y: Math.random() * (canvas.height - vMargin * 2) + vMargin,
         z: Math.random() * 100,
         vx: (Math.random() * 2 - 1) * speed,
         vy: (Math.random() * 2 - 1) * speed,
@@ -184,11 +190,11 @@ function update() {
                         } else if (point.x > canvas.width - coloredMargin) {
                             point.x = canvas.width - coloredMargin;
                         }
-
-                        if (point.y < coloredMargin) {
-                            point.y = coloredMargin;
-                        } else if (point.y > canvas.height - coloredMargin) {
-                            point.y = canvas.height - coloredMargin;
+                    
+                        if (point.y < verticalColoredMargin) {
+                            point.y = verticalColoredMargin;
+                        } else if (point.y > canvas.height - verticalColoredMargin) {
+                            point.y = canvas.height - verticalColoredMargin;
                         }
                     } else {
                         if (point.x < margin) {
@@ -196,11 +202,11 @@ function update() {
                         } else if (point.x > canvas.width - margin) {
                             point.x = canvas.width - margin;
                         }
-
-                        if (point.y < margin) {
-                            point.y = margin;
-                        } else if (point.y > canvas.height - margin) {
-                            point.y = canvas.height - margin;
+                    
+                        if (point.y < verticalMargin) {
+                            point.y = verticalMargin;
+                        } else if (point.y > canvas.height - verticalMargin) {
+                            point.y = canvas.height - verticalMargin;
                         }
                     }
                 }
@@ -212,10 +218,10 @@ function update() {
 
             if (point.color !== '#444444') {
                 if (point.x < coloredMargin || point.x > canvas.width - coloredMargin) point.vx *= -1;
-                if (point.y < coloredMargin || point.y > canvas.height - coloredMargin) point.vy *= -1;
+                if (point.y < verticalColoredMargin || point.y > canvas.height - verticalColoredMargin) point.vy *= -1;
             } else {
                 if (point.x < margin || point.x > canvas.width - margin) point.vx *= -1;
-                if (point.y < margin || point.y > canvas.height - margin) point.vy *= -1;
+                if (point.y < verticalMargin || point.y > canvas.height - verticalMargin) point.vy *= -1;
             }
 
             if (point.z < 0 || point.z > 100) point.vz *= -1;
@@ -286,6 +292,8 @@ function optimizedParticleGeneration(time, point) {
         .map(({ value }) => value);
 }
 
+
+
 class ParticleSystem {
     constructor() {
         this.particles = [];
@@ -324,38 +332,59 @@ class ParticleSystem {
         if (this.cursorCache.has(color)) {
             return this.cursorCache.get(color);
         }
-
+    
         const canvas = document.createElement('canvas');
         canvas.width = 24;
         canvas.height = 24;
         const ctx = canvas.getContext('2d');
-
-        // Fonction pour dessiner le contour pixelisé
-        const drawOutline = (targetCtx) => {
-            targetCtx.lineWidth = 0.8;
-            targetCtx.strokeStyle = 'rgba(0, 0, 0, 1)';
-            
-            targetCtx.beginPath();
-            targetCtx.moveTo(3, 3);
-            targetCtx.lineTo(10.07, 19.97);
-            targetCtx.lineTo(12.58, 12.58);
-            targetCtx.lineTo(19.97, 10.07);
-            targetCtx.closePath();
-            targetCtx.stroke();
-
-            targetCtx.beginPath();
-            targetCtx.moveTo(13, 13);
-            targetCtx.lineTo(19, 19);
-            targetCtx.stroke();
-        };
-
-        // Dessiner le contour pixelisé
-        this.createPixelatedOutline(ctx, drawOutline);
-
-        // Dessiner la forme colorée normalement
-        ctx.fillStyle = color;
-        ctx.strokeStyle = color;
+    
+        // Effet de profondeur - ombre subtile
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+        ctx.shadowBlur = 1;
+        ctx.shadowOffsetY = 0.5;
+    
+        // Première couche - base plus sombre
+        const darkenedColor = this.adjustColor(color, -15);
+        ctx.fillStyle = darkenedColor;
+        this.drawCursorShape(ctx);
         
+        // Deuxième couche - couleur normale
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.fillStyle = color;
+        this.drawCursorShape(ctx);
+    
+        // Contour lisse avec antialiasing amélioré
+        ctx.lineWidth = 1.2;
+        for (let i = 0; i < 3; i++) {
+            ctx.strokeStyle = `rgba(0, 0, 0, ${0.15 - i * 0.03})`;
+            this.drawCursorOutline(ctx);
+        }
+    
+        // Effet de brillance sur les bords
+        const gradient = ctx.createLinearGradient(3, 3, 19.97, 19.97);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+        gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)');
+        
+        ctx.fillStyle = gradient;
+        this.drawCursorShape(ctx);
+    
+        // Contour pixelisé final
+        const drawOutline = (targetCtx) => {
+            targetCtx.lineWidth = 0.6;
+            targetCtx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+            this.drawCursorOutline(targetCtx);
+        };
+    
+        this.createPixelatedOutline(ctx, drawOutline);
+    
+        this.cursorCache.set(color, canvas);
+        return canvas;
+    }
+    
+    // Méthodes utilitaires à ajouter
+    drawCursorShape(ctx) {
         ctx.beginPath();
         ctx.moveTo(3, 3);
         ctx.lineTo(10.07, 19.97);
@@ -363,15 +392,41 @@ class ParticleSystem {
         ctx.lineTo(19.97, 10.07);
         ctx.closePath();
         ctx.fill();
-
-        ctx.lineWidth = 1.5;
+    }
+    
+    drawCursorOutline(ctx) {
+        ctx.beginPath();
+        ctx.moveTo(3, 3);
+        ctx.lineTo(10.07, 19.97);
+        ctx.lineTo(12.58, 12.58);
+        ctx.lineTo(19.97, 10.07);
+        ctx.closePath();
+        ctx.stroke();
+    
         ctx.beginPath();
         ctx.moveTo(13, 13);
         ctx.lineTo(19, 19);
         ctx.stroke();
-
-        this.cursorCache.set(color, canvas);
-        return canvas;
+    }
+    
+    adjustColor(color, amount) {
+        const rgb = this.hexToRgb(color);
+        return `rgb(${
+            Math.max(0, Math.min(255, rgb.r + amount))}, ${
+            Math.max(0, Math.min(255, rgb.g + amount))}, ${
+            Math.max(0, Math.min(255, rgb.b + amount))
+        })`;
+    }
+    
+    hexToRgb(hex) {
+        const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
     }
 
     getTextCanvas(text, color) {
@@ -379,30 +434,73 @@ class ParticleSystem {
         if (this.textCache.has(key)) {
             return this.textCache.get(key);
         }
-
+    
         const canvas = document.createElement('canvas');
         canvas.width = 60;
         canvas.height = 30;
         const ctx = canvas.getContext('2d');
-
-        // Fonction pour dessiner le contour du texte pixelisé
+    
+        // Effet de profondeur - ombre subtile
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+        ctx.shadowBlur = 1;
+        ctx.shadowOffsetY = 0.5;
+        
+        // Première couche - base plus sombre
+        ctx.font = "600 16px system-ui";
+        const darkenedColor = this.adjustColor(color, -15);
+        ctx.fillStyle = darkenedColor;
+        ctx.fillText(text, 20, 15);
+    
+        // Deuxième couche - couleur normale
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.fillStyle = color;
+        ctx.fillText(text, 20, 15);
+    
+        // Contour lisse avec antialiasing amélioré
+        ctx.lineWidth = 1.35;
+        for (let i = 0; i < 3; i++) {
+            ctx.strokeStyle = `rgba(0, 0, 0, ${0.15 - i * 0.03})`;
+            ctx.strokeText(text, 20, 15);
+        }
+    
+        // Effet de brillance sur les bords
+        const gradient = ctx.createLinearGradient(20, 0, 20, 20);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+        gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)');
+    
+        ctx.fillStyle = gradient;
+        ctx.fillText(text, 20, 15);
+    
+        // Contour pixelisé final
         const drawOutline = (targetCtx) => {
             targetCtx.font = "600 16px system-ui";
-            targetCtx.strokeStyle = 'rgba(0, 0, 0, 1)';
-            targetCtx.lineWidth = 0.8;
+            targetCtx.lineWidth = 0.7;
+            targetCtx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
             targetCtx.strokeText(text, 20, 15);
         };
-
-        // Dessiner le contour pixelisé
+    
         this.createPixelatedOutline(ctx, drawOutline);
-
-        // Dessiner le texte coloré normalement
+    
+        // Dernière couche - texte final
         ctx.font = "600 16px system-ui";
         ctx.fillStyle = color;
         ctx.fillText(text, 20, 15);
-
+    
         this.textCache.set(key, canvas);
         return canvas;
+    }
+
+    isParticleVisible(p, x, y) {
+        const size = p.isCursor ? 20 : 40; // taille pour curseur ou texte "click"
+        const particleX = x;
+        const particleY = y;
+        
+        return !(particleX + size < 0 || 
+                 particleX - size > canvas.width || 
+                 particleY + size < 0 || 
+                 particleY - size > canvas.height);
     }
 
     render(ctx, time, point) {
@@ -451,8 +549,7 @@ class ParticleSystem {
 function draw(timestamp) {
     if (!startTime) startTime = timestamp;
 
-    ctx.fillStyle = 'rgba(245, 245, 245, 5)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 1. Dessiner les lignes
     lines.forEach(line => {

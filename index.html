@@ -7,7 +7,18 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" type="text/css" href="assets.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    
+
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+            "three/addons/postprocessing/": "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/"
+          }
+        }
+    </script>
+
 </head>
 <body class="fade-in">
     <header id="header">
@@ -69,12 +80,24 @@
     <script>
         // Écouter les messages de l'iframe
         window.addEventListener('message', function(event) {
-            if (event.data.height) {
+            // Vérifier l'origine du message
+            if (event.origin !== window.location.origin) {
+                console.log('Message rejeté d\'une origine non autorisée:', event.origin);
+                return;
+            }
+        
+            // Vérifier que la donnée est du format attendu
+            if (event.data && typeof event.data.height === 'number') {
                 document.querySelector('header iframe').style.height = event.data.height + 'px';
             }
         }, false);
     </script>
 
-    <script src="script-idx.js"></script>
+    <script type="module">
+        import { Particle3DRenderer } from './particle-utils.js';
+        window.Particle3DRenderer = Particle3DRenderer;
+    </script>
+    <script type="module" src="script-idx.js"></script>
+    
 </body>
 </html>
